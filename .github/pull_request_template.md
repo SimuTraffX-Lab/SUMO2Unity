@@ -32,7 +32,7 @@ Please check the type of change your PR introduces:
     - See error
 -->
 
-\_Note: Please test this on Chrome and Firefox.
+\_Note: Please test this Unity Editor
 
 ## Scope of the work
 
