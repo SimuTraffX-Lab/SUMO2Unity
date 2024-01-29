@@ -102,10 +102,19 @@ public class SumoUnityController : MonoBehaviour
 
         for (int i = 0; i < junctions.transform.childCount; i++)
         {
-            string junctionName = junctions.transform.GetChild(i).name;
-            var currentphase = client.TrafficLight.GetCurrentPhase(junctionName);
-            int junctionIndex = int.Parse(junctionName);
-            ChangeTrafficStatus(junctionIndex, currentphase.Content);
+            GameObject currentJunction = junctions.transform.GetChild(i).gameObject;
+            if (currentJunction.activeInHierarchy)
+            {
+                string junctionName = currentJunction.name;
+                var currentphase = client.TrafficLight.GetCurrentPhase(junctionName);
+                int junctionIndex = int.Parse(junctionName);
+                ChangeTrafficStatus(junctionIndex, currentphase.Content);
+            }
+            else
+            {
+                UnityEngine.Debug.Log($"junction {currentJunction.name} is inactive. Activate it in the heirarchy to display traffic signals");
+            }
+
         }
         client.Control.SimStep();
     }

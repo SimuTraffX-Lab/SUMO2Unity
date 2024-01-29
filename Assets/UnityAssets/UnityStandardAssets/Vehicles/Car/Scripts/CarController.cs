@@ -38,6 +38,7 @@ namespace UnityStandardAssets.Vehicles.Car
         [SerializeField] private float m_SlipLimit;
         [SerializeField] public float m_BrakeTorque;
         [SerializeField] private Transform steeringWheel;
+        [SerializeField] private Transform speedMeterNeedle;
 
         private Quaternion[] m_WheelMeshLocalRotations;
         private Vector3 m_Prevpos, m_Pos;
@@ -195,10 +196,9 @@ namespace UnityStandardAssets.Vehicles.Car
             }
         }
 
-
         private void ApplyDrive(float accel, float footbrake)
         {
-
+            speedMeterNeedle.eulerAngles = new Vector3(speedMeterNeedle.eulerAngles.x, speedMeterNeedle.eulerAngles.y, -CurrentSpeed); //added speed gauge needle movements
             float thrustTorque;
             switch (m_CarDriveType)
             {
