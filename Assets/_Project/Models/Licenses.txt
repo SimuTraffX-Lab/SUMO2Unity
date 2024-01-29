@@ -1,0 +1,3 @@
+﻿
+The models/assets in _Project folder are developed by developers/artists in SUMO2Unity Co-Simulation tool and are free to use for commercial and non-commercial use.
+
