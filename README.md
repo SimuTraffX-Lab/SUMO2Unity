@@ -4,7 +4,7 @@ Welcome to Sumo2Unity Integration
 Sumo2Unity seamlessly integrates SUMO (Simulation of Urban MObility) with Unity, a powerful 3D game engine. This open-source project bridges the gap between microscopic traffic simulation and real-time 3D visualization, empowering you to Immerse yourself in a simulated traffic network. This will help to gain deeper insights through real-time observation and interaction. This can be used to leverage the combined power of both platforms for research, development, and educational applications in transportation.
 
 ## Pre-Requisites
-- Download latest version of [Sumo](https://sumo.dlr.de/docs/Installing/index.html).
+- Download latest version of [Sumo](https://eclipse.dev/sumo/).
 - Download [Unity Hub](https://unity.com/download).
 - Once you install Unity Hub, download and install Unity Editor. We recommend version 2022.3.16f1.
 
@@ -16,7 +16,9 @@ Sumo2Unity seamlessly integrates SUMO (Simulation of Urban MObility) with Unity,
 
 ## Usage
 - To change the simulation settings, go to `Assets/_Project/Sumo_Data`.
-- You can also add new vehicles, traffic signals, and pedestrians to the Simulation.
+- Open Sumo2Unity file to see the existing simulation.
+- To change simulation, click on `Edit > Open network in netedit` or press `ctrl + T`.
+- You can add or modify vehicles, traffic signals, or pedestrians in the Simulation.
 
 ## Additional Help
 - How to clone a repository? [Youtube Tutorial](https://www.youtube.com/watch?v=EhxPBMQFCaI)
