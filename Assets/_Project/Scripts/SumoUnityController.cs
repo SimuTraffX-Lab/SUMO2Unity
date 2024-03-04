@@ -18,7 +18,12 @@ public class SumoUnityController : MonoBehaviour
     [SerializeField]
     private GameObject junctions;
 
-   
+    [SerializeField]
+    private float npcCarVisibilityDistance;
+
+
+
+
     void Start()
     {
         OpenSumoBackground();
@@ -275,7 +280,7 @@ public class SumoUnityController : MonoBehaviour
     {
         bool carIsFar = false;
         float distance = Vector3.Distance(simulatorCar.transform.position, npcCarDistance);
-        if(distance > 250f)
+        if(distance > npcCarVisibilityDistance)
         {
             carIsFar = true;
         }
