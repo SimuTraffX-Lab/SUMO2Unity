@@ -18,7 +18,12 @@ public class SumoUnityController : MonoBehaviour
     [SerializeField]
     private GameObject junctions;
 
-   
+    [SerializeField]
+    private float npcCarVisibilityDistance;
+
+
+
+
     void Start()
     {
         OpenSumoBackground();
@@ -81,11 +86,20 @@ public class SumoUnityController : MonoBehaviour
         for (int carid = 1; carid < carlist.Count; carid++)
         {
             var carpos = client.Vehicle.GetPosition(carlist[carid].name).Content; 
-            carlist[carid].transform.position = new Vector3((float)carpos.X, 0f, (float)carpos.Y);
-            var newangle = client.Vehicle.GetAngle(carlist[carid].name).Content; 
-            carlist[carid].transform.rotation = Quaternion.Euler(0f, (float)newangle, 0f);
-            double carSpeed = client.Vehicle.GetSpeed(carlist[carid].name).Content;
-            RotateCarWheels(FindChildRecursive(carlist[carid].transform, "Wheels"), (float)carSpeed);
+
+            if(CheckIfCarFar(new Vector3((float)carpos.X, 0f, (float)carpos.Y)))
+            {
+                carlist[carid].gameObject.SetActive(false);
+            }
+            else
+            {
+                carlist[carid].gameObject.SetActive(true);
+                carlist[carid].transform.position = new Vector3((float)carpos.X, 0f, (float)carpos.Y);
+                var newangle = client.Vehicle.GetAngle(carlist[carid].name).Content;
+                carlist[carid].transform.rotation = Quaternion.Euler(0f, (float)newangle, 0f);
+                double carSpeed = client.Vehicle.GetSpeed(carlist[carid].name).Content;
+                RotateCarWheels(FindChildRecursive(carlist[carid].transform, "Wheels"), (float)carSpeed);
+            }            
         }
 
         for (int i = 0; i < newvehicles.Count; i++)
@@ -259,6 +273,18 @@ public class SumoUnityController : MonoBehaviour
                 wheelTransform.Rotate(Vector3.right * (speed));
             }
         }
+    }
+
+    //checks if npc cars are farther away from ego car.
+    private bool CheckIfCarFar(Vector3 npcCarDistance)
+    {
+        bool carIsFar = false;
+        float distance = Vector3.Distance(simulatorCar.transform.position, npcCarDistance);
+        if(distance > npcCarVisibilityDistance)
+        {
+            carIsFar = true;
+        }
+        return carIsFar;
     }
 }
 
