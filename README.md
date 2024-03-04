@@ -22,7 +22,7 @@ Sumo2Unity seamlessly integrates SUMO (Simulation of Urban MObility) with Unity,
 - How to clone a repository? [Youtube Tutorial](https://www.youtube.com/watch?v=EhxPBMQFCaI)
 - How to download Unity? [Youtube Tutorial](https://www.youtube.com/watch?v=Kh_FD0Ypdhg)
 - How to install Sumo? [Youtube Tutorial](https://www.youtube.com/watch?v=7DfVUwgUIlQ)
-- If you need more help or have any questions, feel free to post them at the [Issues](https://github.com/SUMO2Unity/SUMO2Unity/issues) section. 
+- If you need more help or have any questions, feel free to create a new issue at the [Issues](https://github.com/SUMO2Unity/SUMO2Unity/issues) section. 
 
 ## Documentation
 - Please Visit our Documentation here for additional details
