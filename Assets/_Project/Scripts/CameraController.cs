@@ -1,3 +1,10 @@
+
+
+//This part is not used when ego car is present.
+//This sections helps to create a cinamtic camera view for recording purposes.
+
+
+
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;

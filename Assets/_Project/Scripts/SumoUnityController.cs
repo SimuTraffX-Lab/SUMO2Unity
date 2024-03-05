@@ -41,7 +41,7 @@ public class SumoUnityController : MonoBehaviour
         carlist.Add(simulatorCar);
     }
 
-    private void QuitSumo()
+    private void StopSumoBackground()
     {
         string processName = $"sumo-gui";
         Process[] processes = Process.GetProcessesByName(processName);
@@ -60,7 +60,7 @@ public class SumoUnityController : MonoBehaviour
     private void OnApplicationQuit()
     {
         client.Control.Close();
-        QuitSumo();
+        StopSumoBackground();
     }
 
     void FixedUpdate()
@@ -80,6 +80,7 @@ public class SumoUnityController : MonoBehaviour
         var road = client.Vehicle.GetRoadID(simulatorCar.name).Content;
         var lane = client.Vehicle.GetLaneIndex(simulatorCar.name).Content;
 
+        // Update the position of ego car in Sumo.
         client.Vehicle.MoveToXY("0", road, lane, (double)simulatorCar.transform.position.x,
            (double)simulatorCar.transform.position.z, (double)simulatorCar.transform.eulerAngles.y, 2);
 
@@ -87,7 +88,8 @@ public class SumoUnityController : MonoBehaviour
         {
             var carpos = client.Vehicle.GetPosition(carlist[carid].name).Content; 
 
-            if(CheckIfCarFar(new Vector3((float)carpos.X, 0f, (float)carpos.Y)))
+            // Checks if the npc car is far. If it is far, they are hidden in the scene to save resources and their position is not updated.
+            if(isNpcCarFar(new Vector3((float)carpos.X, 0f, (float)carpos.Y)))
             {
                 carlist[carid].gameObject.SetActive(false);
             }
@@ -98,7 +100,7 @@ public class SumoUnityController : MonoBehaviour
                 var newangle = client.Vehicle.GetAngle(carlist[carid].name).Content;
                 carlist[carid].transform.rotation = Quaternion.Euler(0f, (float)newangle, 0f);
                 double carSpeed = client.Vehicle.GetSpeed(carlist[carid].name).Content;
-                RotateCarWheels(FindChildRecursive(carlist[carid].transform, "Wheels"), (float)carSpeed);
+                RotateCarWheels(FindChildRecursive(carlist[carid].transform, "Wheels"), (float)carSpeed); 
             }            
         }
 
@@ -106,7 +108,7 @@ public class SumoUnityController : MonoBehaviour
         {
             var newcarposition = client.Vehicle.GetPosition(newvehicles[i]).Content; 
             string carName = GetSubstringUntilCharacter(newvehicles[i], '_');
-            GameObject newcar = setNPCCar(carName);
+            GameObject newcar = setNPCCarPrefab(carName);
             newcar.transform.position = new Vector3((float)newcarposition.X, 0.0f, (float)newcarposition.Y);
             var newangle = client.Vehicle.GetAngle(newvehicles[i]).Content;
             newcar.transform.rotation = Quaternion.Euler(0f, (float)newangle, 0f);
@@ -230,7 +232,7 @@ public class SumoUnityController : MonoBehaviour
         Thread.Sleep(3000);
     }
 
-    private GameObject setNPCCar(string carName)
+    private GameObject setNPCCarPrefab(string carName)
     {
         GameObject newcar = null;
         switch (carName)
@@ -276,7 +278,7 @@ public class SumoUnityController : MonoBehaviour
     }
 
     //checks if npc cars are farther away from ego car.
-    private bool CheckIfCarFar(Vector3 npcCarDistance)
+    private bool isNpcCarFar(Vector3 npcCarDistance)
     {
         bool carIsFar = false;
         float distance = Vector3.Distance(simulatorCar.transform.position, npcCarDistance);

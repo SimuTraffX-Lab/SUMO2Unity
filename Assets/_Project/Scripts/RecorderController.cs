@@ -50,6 +50,7 @@ public class RecorderController : MonoBehaviour
         return Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments), "SumoUnity", timeStamp);
     }
 
+    //Starts recording data and images. Images are taken but not saved when recording to improve performance.
     public void StartRecording()
     {
         pathToSaveDataImage = GetDataPath(DateTime.Now.ToString("yyyy-MM-dd HH-mm-ss tt"));
@@ -66,12 +67,14 @@ public class RecorderController : MonoBehaviour
        
     }
 
+    // Saving pictures is done after stopping recording to improve performance
     public void StopRecording()
     {
         StartCoroutine(SavePicturesCoroutine());
         CancelInvoke("ImageCaptureProcess");
         CancelInvoke("CalculateData");
     }
+
 
     private void CalculateData()
     {
