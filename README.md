@@ -13,6 +13,7 @@ Sumo2Unity seamlessly integrates SUMO (Simulation of Urban MObility) with Unity,
 - Once downloaded, open the project using Unity on the recommended version.
 - In the editor, go to `_Project/Scenes` and open SUMO2Unity scene.
 - Click on the play button to start the simulation.
+- [![YouTube Video](https://img.youtube.com/vi/AWS-hvQ5cqs/0.jpg)](https://www.youtube.com/watch?v=AWS-hvQ5cqs)
 
 ## Usage
 - To change the simulation settings, go to `Assets/_Project/Sumo_Data`.
