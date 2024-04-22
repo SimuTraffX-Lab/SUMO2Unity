@@ -87,21 +87,24 @@ public class SumoUnityController : MonoBehaviour
         for (int carid = 1; carid < carlist.Count; carid++)
         {
             var carpos = client.Vehicle.GetPosition(carlist[carid].name).Content; 
-
-            // Checks if the npc car is far. If it is far, they are hidden in the scene to save resources and their position is not updated.
-            if(isNpcCarFar(new Vector3((float)carpos.X, 0f, (float)carpos.Y)))
+            if(carpos != null)
             {
-                carlist[carid].gameObject.SetActive(false);
+                // Checks if the npc car is far. If it is far, they are hidden in the scene to save resources and their position is not updated.
+                if (isNpcCarFar(new Vector3((float)carpos.X, 0f, (float)carpos.Y)))
+                {
+                    carlist[carid].gameObject.SetActive(false);
+                }
+                else
+                {
+                    carlist[carid].gameObject.SetActive(true);
+                    carlist[carid].transform.position = new Vector3((float)carpos.X, 0f, (float)carpos.Y);
+                    var newangle = client.Vehicle.GetAngle(carlist[carid].name).Content;
+                    carlist[carid].transform.rotation = Quaternion.Euler(0f, (float)newangle, 0f);
+                    double carSpeed = client.Vehicle.GetSpeed(carlist[carid].name).Content;
+                    RotateCarWheels(FindChildRecursive(carlist[carid].transform, "Wheels"), (float)carSpeed);
+                }
             }
-            else
-            {
-                carlist[carid].gameObject.SetActive(true);
-                carlist[carid].transform.position = new Vector3((float)carpos.X, 0f, (float)carpos.Y);
-                var newangle = client.Vehicle.GetAngle(carlist[carid].name).Content;
-                carlist[carid].transform.rotation = Quaternion.Euler(0f, (float)newangle, 0f);
-                double carSpeed = client.Vehicle.GetSpeed(carlist[carid].name).Content;
-                RotateCarWheels(FindChildRecursive(carlist[carid].transform, "Wheels"), (float)carSpeed); 
-            }            
+                
         }
 
         for (int i = 0; i < newvehicles.Count; i++)
