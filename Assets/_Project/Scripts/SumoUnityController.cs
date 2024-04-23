@@ -20,12 +20,28 @@ public class SumoUnityController : MonoBehaviour
 
     [SerializeField]
     private float npcCarVisibilityDistance;
+    private float squaredVisibilityDistance;
 
+    public fpsLimits fpsLimit;
+
+
+    public enum fpsLimits
+    {
+        noLimit = 0,
+        limit30 = 30,
+        limit60 = 60,
+        limit90 = 90,
+        limit120 = 120,
+        limit240 = 240,
+    }
 
 
 
     void Start()
     {
+        QualitySettings.vSyncCount = 0;
+        Application.targetFrameRate = (int)fpsLimit;
+
         OpenSumoBackground();
         client = new TraCIClient();
         client.Connect("127.0.0.1", 4001); 
@@ -39,6 +55,8 @@ public class SumoUnityController : MonoBehaviour
         simulatorCar.transform.position = new Vector3((float)shape.X, 0.001270017f, (float)shape.Y);
         simulatorCar.transform.rotation = Quaternion.Euler(0, (float)angle, 0);
         carlist.Add(simulatorCar);
+
+        squaredVisibilityDistance = npcCarVisibilityDistance * npcCarVisibilityDistance;
     }
 
     private void StopSumoBackground()
@@ -69,7 +87,7 @@ public class SumoUnityController : MonoBehaviour
         var vehiclesleft = client.Simulation.GetArrivedIDList("0").Content; 
         for (int j = 0; j < vehiclesleft.Count; j++)
         {
-            GameObject toremove = GameObject.Find(vehiclesleft[j]);
+            GameObject toremove = simulatorCar.transform.Find(vehiclesleft[j]).gameObject;
             if (toremove)
             {
                 RemoveLeftCar(toremove);
@@ -85,33 +103,20 @@ public class SumoUnityController : MonoBehaviour
 
         for (int carid = 1; carid < carlist.Count; carid++)
         {
-            var currentVehicleInSumo = client.Vehicle.GetIdList();
-            if (currentVehicleInSumo.Content.Contains(carlist[carid].name))
+            var carpos = client.Vehicle.GetPosition(carlist[carid].name).Content;
+            if (carpos != null)
             {
-                var carpos = client.Vehicle.GetPosition(carlist[carid].name).Content;
-                if (carpos != null)
-                {
-                    // Checks if the npc car is far. If it is far, they are hidden in the scene to save resources and their position is not updated.
-                    if (isNpcCarFar(new Vector3((float)carpos.X, 0f, (float)carpos.Y)))
-                    {
-                        carlist[carid].gameObject.SetActive(false);
-                    }
-                    else
-                    {
-                        carlist[carid].gameObject.SetActive(true);
-                        carlist[carid].transform.position = new Vector3((float)carpos.X, 0f, (float)carpos.Y);
-                        var newangle = client.Vehicle.GetAngle(carlist[carid].name).Content;
-                        carlist[carid].transform.rotation = Quaternion.Euler(0f, (float)newangle, 0f);
-                        double carSpeed = client.Vehicle.GetSpeed(carlist[carid].name).Content;
-                        RotateCarWheels(FindChildRecursive(carlist[carid].transform, "Wheels"), (float)carSpeed);
-                    }
-                }
-            }            
+                carlist[carid].transform.position = new Vector3((float)carpos.X, 0f, (float)carpos.Y);
+                var newangle = client.Vehicle.GetAngle(carlist[carid].name).Content;
+                carlist[carid].transform.rotation = Quaternion.Euler(0f, (float)newangle, 0f);
+                double carSpeed = client.Vehicle.GetSpeed(carlist[carid].name).Content;
+                RotateCarWheels(FindChildRecursive(carlist[carid].transform, "Wheels"), (float)carSpeed);
+            }
             else
             {
-                RemoveLeftCar(carlist[carid].gameObject);
+                RemoveLeftCar(carlist[carid]);
             }
-                
+
         }
 
         for (int i = 0; i < newvehicles.Count; i++)
@@ -119,6 +124,7 @@ public class SumoUnityController : MonoBehaviour
             var newcarposition = client.Vehicle.GetPosition(newvehicles[i]).Content; 
             string carName = GetSubstringUntilCharacter(newvehicles[i], '_');
             GameObject newcar = setNPCCarPrefab(carName);
+            newcar.transform.parent = simulatorCar.transform;
             newcar.transform.position = new Vector3((float)newcarposition.X, 0.0f, (float)newcarposition.Y);
             var newangle = client.Vehicle.GetAngle(newvehicles[i]).Content;
             newcar.transform.rotation = Quaternion.Euler(0f, (float)newangle, 0f);
@@ -133,8 +139,7 @@ public class SumoUnityController : MonoBehaviour
             {
                 string junctionName = currentJunction.name;
                 var currentphase = client.TrafficLight.GetCurrentPhase(junctionName);
-                int junctionIndex = int.Parse(junctionName);
-                ChangeTrafficStatus(junctionIndex, currentphase.Content);
+                ChangeTrafficStatus(junctionName, currentphase.Content);
             }
             else
             {
@@ -151,12 +156,12 @@ public class SumoUnityController : MonoBehaviour
         Destroy(toremove);
     }
 
-    private void ChangeTrafficStatus(int junctionID, int state)
+    private void ChangeTrafficStatus(string junctionID, int state)
     {
         Dictionary<int, char> trafficLightColor = new Dictionary<int, char>();
-        var newjunction = GameObject.Find($"{junctionID}");
+        GameObject newjunction = junctions.transform.Find(junctionID).gameObject;
 
-        string newstate = client.TrafficLight.GetState($"{junctionID}").Content;
+        string newstate = client.TrafficLight.GetState(junctionID).Content;
         int i = 0;
         foreach (char c in newstate)
         {
@@ -294,11 +299,11 @@ public class SumoUnityController : MonoBehaviour
     }
 
     //checks if npc cars are farther away from ego car.
-    private bool isNpcCarFar(Vector3 npcCarDistance)
+    private bool isNpcCarFar(Vector3 npcCarPosition)
     {
         bool carIsFar = false;
-        float distance = Vector3.Distance(simulatorCar.transform.position, npcCarDistance);
-        if(distance > npcCarVisibilityDistance)
+        float distanceSqr = Vector3.SqrMagnitude(simulatorCar.transform.position - npcCarPosition);
+        if (distanceSqr > squaredVisibilityDistance)
         {
             carIsFar = true;
         }
