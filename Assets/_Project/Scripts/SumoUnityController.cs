@@ -17,6 +17,8 @@ public class SumoUnityController : MonoBehaviour
 
     [SerializeField]
     private GameObject junctions;
+    [SerializeField]
+    private GameObject simulationCars;
 
     [SerializeField]
     private float npcCarVisibilityDistance;
@@ -124,7 +126,7 @@ public class SumoUnityController : MonoBehaviour
             var newcarposition = client.Vehicle.GetPosition(newvehicles[i]).Content; 
             string carName = GetSubstringUntilCharacter(newvehicles[i], '_');
             GameObject newcar = setNPCCarPrefab(carName);
-            newcar.transform.parent = simulatorCar.transform;
+            newcar.transform.parent = simulationCars.transform;
             newcar.transform.position = new Vector3((float)newcarposition.X, 0.0f, (float)newcarposition.Y);
             var newangle = client.Vehicle.GetAngle(newvehicles[i]).Content;
             newcar.transform.rotation = Quaternion.Euler(0f, (float)newangle, 0f);
