@@ -239,7 +239,7 @@ public class SumoUnityController : MonoBehaviour
     private void OpenSumoBackground()
     {
         string folderPath = $"{Application.dataPath}/_Project/Sumo_Data";
-        string command = $"cd /d {folderPath} && sumo-gui -c SUMO2UNITY.sumocfg --start --remote-port 4001 --step-length {timeStep}";
+        string command = $"cd /d {folderPath} && sumo-gui -c SUMO2UNITY.sumocfg --start --remote-port 4001 --step-length {timeStep} --lanechange.duration 2.5";
 
         Process process = new Process();
         ProcessStartInfo startInfo = new ProcessStartInfo();
