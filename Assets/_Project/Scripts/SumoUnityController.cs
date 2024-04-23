@@ -20,10 +20,6 @@ public class SumoUnityController : MonoBehaviour
     [SerializeField]
     private GameObject simulationCars;
 
-    [SerializeField]
-    private float npcCarVisibilityDistance;
-    private float squaredVisibilityDistance;
-
     public fpsLimits fpsLimit;
 
 
@@ -57,8 +53,6 @@ public class SumoUnityController : MonoBehaviour
         simulatorCar.transform.position = new Vector3((float)shape.X, 0.001270017f, (float)shape.Y);
         simulatorCar.transform.rotation = Quaternion.Euler(0, (float)angle, 0);
         carlist.Add(simulatorCar);
-
-        squaredVisibilityDistance = npcCarVisibilityDistance * npcCarVisibilityDistance;
     }
 
     private void StopSumoBackground()
@@ -299,18 +293,6 @@ public class SumoUnityController : MonoBehaviour
                 wheelTransform.Rotate(Vector3.right * (speed));
             }
         }
-    }
-
-    //checks if npc cars are farther away from ego car.
-    private bool isNpcCarFar(Vector3 npcCarPosition)
-    {
-        bool carIsFar = false;
-        float distanceSqr = Vector3.SqrMagnitude(simulatorCar.transform.position - npcCarPosition);
-        if (distanceSqr > squaredVisibilityDistance)
-        {
-            carIsFar = true;
-        }
-        return carIsFar;
     }
 }
 
