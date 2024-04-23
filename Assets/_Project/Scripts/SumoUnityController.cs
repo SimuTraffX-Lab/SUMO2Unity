@@ -89,8 +89,8 @@ public class SumoUnityController : MonoBehaviour
         var vehiclesleft = client.Simulation.GetArrivedIDList("0").Content; 
         for (int j = 0; j < vehiclesleft.Count; j++)
         {
-            GameObject toremove = simulatorCar.transform.Find(vehiclesleft[j]).gameObject;
-            if (toremove)
+            GameObject toremove = simulatorCar.transform.Find(vehiclesleft[j])?.gameObject;
+            if (toremove != null)
             {
                 RemoveLeftCar(toremove);
             }
@@ -117,6 +117,7 @@ public class SumoUnityController : MonoBehaviour
             else
             {
                 RemoveLeftCar(carlist[carid]);
+
             }
 
         }
