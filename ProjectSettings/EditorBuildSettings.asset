@@ -8,4 +8,8 @@ EditorBuildSettings:
   - enabled: 1
     path: Assets/Scenes/The_Viking_Village.unity
     guid: 00000000000000000000000000000000
-  m_configObjects: {}
+  m_configObjects:
+    com.unity.xr.management.loader_settings: {fileID: 11400000, guid: 69aebf4129b854f4fb47ffaf0c59297c,
+      type: 2}
+    com.unity.xr.openxr.settings4: {fileID: 11400000, guid: c01526bb8f955c94d84500e2fbdc22fc,
+      type: 2}

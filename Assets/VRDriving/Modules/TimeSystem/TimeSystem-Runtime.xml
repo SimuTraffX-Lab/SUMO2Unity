@@ -1,0 +1,33 @@
+<?xml version="1.0"?>
+<doc>
+    <assembly>
+        <name>TimeSystem-Runtime</name>
+    </assembly>
+    <members>
+        <member name="T:TimeSystem.TimeManager">
+            <summary>
+            A public static class that provides useful Time utilities.
+            </summary>
+            Author: Mathew Aloisio
+        </member>
+        <member name="P:TimeSystem.TimeManager.TIME_RETRIEVAL_MODE">
+            <summary>The TimeRetrievalMode being used to retrieve time.</summary>
+        </member>
+        <member name="M:TimeSystem.TimeManager.GetTime">
+            <summary>Returns the current time in seconds using the time retrieval method set by 'TimeManager.TIME_RETRIEVAL_MODE'.</summary>
+            <returns>the current time in seconds using the time retrieval method set by 'TimeManager.TIME_RETRIEVAL_MODE'.</returns>
+        </member>
+        <member name="T:TimeSystem.TimeRetrievalMode">
+            <summary>The time mode to use.</summary>
+        </member>
+        <member name="F:TimeSystem.TimeRetrievalMode.Default">
+            <summary>Use the default Time.time for time.</summary>
+        </member>
+        <member name="F:TimeSystem.TimeRetrievalMode.Unscaled">
+            <summary>Use Time.unscaledTime for time.</summary>
+        </member>
+        <member name="F:TimeSystem.TimeRetrievalMode.Real">
+            <summary>Use Time.realtimeSinceStartup for time.</summary>
+        </member>
+    </members>
+</doc>

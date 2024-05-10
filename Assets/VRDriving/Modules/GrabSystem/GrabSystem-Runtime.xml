@@ -1,0 +1,831 @@
+<?xml version="1.0"?>
+<doc>
+    <assembly>
+        <name>GrabSystem-Runtime</name>
+    </assembly>
+    <members>
+        <member name="T:GrabSystem.Collisions.DelayUnignoreCollidersOnRelease">
+            <summary>
+            A simple component that references a IgnoreCollidersWhileGrabbing component that uses the 'OverrideUnignoreDelegate' delegate event to delay the unginore collisions for some time.
+            
+            This component references an IgnoreCollidersWhileGrabbing component instead of being forced onto the same GameObject because frequently a developer may want to disable the relevant GameObject after release,
+            this allows this component to be put on a separate non-deactivated GameObject while still allowing the unignore collisions delay.
+            </summary>
+            Author: Mathew Aloisio
+        </member>
+        <member name="F:GrabSystem.Collisions.DelayUnignoreCollidersOnRelease.UnignoreEntry.grabber">
+            <summary>The Grabber to unignore collisions with.</summary>
+        </member>
+        <member name="F:GrabSystem.Collisions.DelayUnignoreCollidersOnRelease.UnignoreEntry.grabbable">
+            <summary>The GrabbableObject that was associated with the collision ignore event.</summary>
+        </member>
+        <member name="F:GrabSystem.Collisions.DelayUnignoreCollidersOnRelease.UnignoreEntry.unignoreTime">
+            <summary>The Time.time to unignore the collision at.</summary>
+        </member>
+        <member name="F:GrabSystem.Collisions.DelayUnignoreCollidersOnRelease.UnignoreEntry.unignoreColliders">
+            <summary>The array of Colliders to unignore.</summary>
+        </member>
+        <member name="F:GrabSystem.Collisions.DelayUnignoreCollidersOnRelease.m_UnignoreEntries">
+            <summary>The list of pending 'unignore entries'.</summary>
+        </member>
+        <member name="T:GrabSystem.Collisions.IgnoreCollidersWhileGrabbing">
+            <summary>
+            A component intended to be attached to a GrabbableObject that subscribes to the relevant 'Grabbed' and 'Released' events to ignore collisions between some colliders and a Grabber while it is holding an object.
+            
+            NOTE: This component does not manage triggers.
+            </summary>
+            Author: Mathew Aloisio
+        </member>
+        <member name="P:GrabSystem.Collisions.IgnoreCollidersWhileGrabbing.Grabbable">
+            <summary>A reference to the GrabbableObject associated with this component.</summary>
+        </member>
+        <member name="F:GrabSystem.Collisions.IgnoreCollidersWhileGrabbing.OverrideUnignoreDelegate">
+            <summary>
+            A delegate event that allows the 'unignore collisions' behaviour to be overridden by anything that subscribes to this event. The boolean argument is passed as a reference, when flipped to true the original unignore collisions behaviour will be skipped.
+            Arg0: Grabber           - The grabber whose collisions are ignored with 'colliders'.
+            Arg1: GrabbableObject   - The grabbable object who is associated with the collision ignore event.
+            Arg2: Collider[]        - The array of Colliders the grabber is ignoring.
+            Arg3: ref bool          - The 'skip unignore collisions' boolean reference that when made true will make the 'unignore collisions' behaviour of this component get skipped.
+            </summary>
+        </member>
+        <member name="T:GrabSystem.Delegates.ActionRef`1">
+            <summary>A simple delegate for events where an argument is passed by reference.</summary>
+            <typeparam name="T">The type of the passed reference.</typeparam>
+            <param name="pItem">The reference that was passed.</param>
+        </member>
+        <member name="T:GrabSystem.Delegates.ActionRef`2">
+            <summary>A simple delegate for events where an argument is passed by reference.</summary>
+            <typeparam name="VALUE_ONE">The type of the fist passed value.</typeparam>
+            <typeparam name="T">The type of the passed reference.</typeparam>
+            <param name="pValueOne">The first value that was passed.</param>
+            <param name="pItem">The reference that was passed.</param>
+        </member>
+        <member name="T:GrabSystem.Delegates.ActionRef`3">
+            <summary>A simple delegate for events where an argument is passed by reference.</summary>
+            <typeparam name="VALUE_ONE">The type of the first passed value.</typeparam>
+            <typeparam name="VALUE_TWO">The type of the second passed value.</typeparam>
+            <typeparam name="T">The type of the passed reference.</typeparam>
+            <param name="pValueOne">The first value that was passed.</param>
+            <param name="pValueTwo">The second value that was passed.</param>
+            <param name="pItem">The reference that was passed.</param>
+        </member>
+        <member name="T:GrabSystem.Delegates.ActionRef`4">
+            <summary>A simple delegate for events where an argument is passed by reference.</summary>
+            <typeparam name="VALUE_ONE">The type of the first passed value.</typeparam>
+            <typeparam name="VALUE_TWO">The type of the second passed value.</typeparam>
+            <typeparam name="VALUE_THREE">The type of the third passed value.</typeparam>
+            <typeparam name="T">The type of the passed reference.</typeparam>
+            <param name="pValueOne">The first value that was passed.</param>
+            <param name="pValueTwo">The second value that was passed.</param>
+            <param name="pValueThree">The third value that was passed.</param>
+            <param name="pItem">The reference that was passed.</param>
+        </member>
+        <member name="T:GrabSystem.GrabberUnityEvent">
+            <summary>
+            Arg0: Grabber         	- The Grabber involved in this grab event.
+            </summary>
+        </member>
+        <member name="T:GrabSystem.GrabUnityEvent">
+            <summary>
+            Arg0: Grabber         	- The Grabber involved in this grab event.
+            Arg1: GrabbableObject   - The GrabbableObject that was involved in the event.
+            </summary>
+        </member>
+        <member name="T:GrabSystem.DistanceCatchAssist">
+            <summary>
+            A component that is generally NOT attached to the same GameObject as a DistanceGrabber that must be referenced to enable assisted catching.
+            This is NOT attached to the same GameObject as a DistanceGrabber to avoid triggering unwanted components.
+            
+            When a distance grabbable that is being distance grabbed by the relevant distance grabber triggers this component an instantenous grab is performed.
+            </summary>
+            Author: Mathew Aloisio
+        </member>
+        <member name="T:GrabSystem.DistanceGrabbable">
+            <summary>
+            A component that can be attached to the same GameObject as a GrabbableObject that allows a Grabber to instantly grab it from a distance.
+            </summary>
+            Author: Mathew Aloisio
+        </member>
+        <member name="P:GrabSystem.DistanceGrabbable.Grabbable">
+            <summary>The GrabbableObject component that this component is converting into a distance grabbable.</summary>
+        </member>
+        <member name="P:GrabSystem.DistanceGrabbable.Target">
+            <summary>A reference to the GrabbableObject being targetted by distance DistanceGrabbable, otherwise null.</summary>
+        </member>
+        <member name="P:GrabSystem.DistanceGrabbable.LastTarget">
+            <summary>The last set target of the distance grabbable, otherwise null if there was none. This reference remains valid after the distance grab is stopped. (This updates immediately when a new valid target is set and will at that point be equal to Target.)</summary>
+        </member>
+        <member name="P:GrabSystem.DistanceGrabbable.TargetLocalHitPoint">
+            <summary>The point the target hit this distance grabbable at during selection in the distance grabbables local space. This is only valid while Target != null.</summary>
+        </member>
+        <member name="P:GrabSystem.DistanceGrabbable.HighlightedByCount">
+            <summary>Returns the number of Grabbers currently highlighting this distance grabbable.</summary>
+        </member>
+        <member name="F:GrabSystem.DistanceGrabbable.m_HighlightedBy">
+            <summary>A list of all Grabbers currently highlighting this distance grabbable.</summary>
+        </member>
+        <member name="E:GrabSystem.DistanceGrabbable.CanDistanceGrabDelegate">
+            <summary>
+            A delegate even that allows distance grab permissions to be overridden by subscribing to this event and modifying the 'ref bool' argument (argument 3).
+            Arg0: Grabber         - The Grabber doing the grabbing. This Grabber is guarenteed to have a DistanceGrabber component.
+            Arg1: GrabbableObject - The GrabbableObject being distance grabbed. This GrabbableObject is guarenteed to have a DistanceGrabbable component.
+            Arg2: ref bool        - The reference to a boolean that when changed to false (or true) forces distance grabs for this object o be denied (or approved).
+            </summary>
+        </member>
+        <member name="M:GrabSystem.DistanceGrabbable.CanDistanceGrab(GrabSystem.Grabber)">
+            <summary>
+            Returns true if pGrabber can distance grab this, otherwise false.
+            NOTE: This does not check all conditions for the Grabber, the Grabber may have its own conditions not specific to this Grabbable. See 'DistanceGrabber.CanDistanceGrab(DistanceGrabbable)'.
+            
+            By default this method uses 'pGrabber.CanGrab(Grabbable)' to check distance grab permission.
+            This method invokes the callback 'CanDistanceGrabDelegate' which gives scripts an opportunity to override distance grab permissions.
+            </summary>
+            <param name="pGrabber"></param>
+            <returns>true if pGrabber can distance grab this distance grabbable, otherwise false.</returns>
+        </member>
+        <member name="M:GrabSystem.DistanceGrabbable.InstantGrab(UnityEngine.Vector3)">
+            <summary>Instantly grabs a distance grabbable.</summary>
+            <param name="pHitPoint">The 'hit point' the grabber targeted.</param>
+        </member>
+        <member name="M:GrabSystem.DistanceGrabbable.SetTarget(GrabSystem.DistanceGrabber,UnityEngine.Vector3)">
+            <summary>
+            Targets the specified DistanceGrabber, or none if null.
+            The distance grabbable will immediate start being 'grabbed' (teleported or pulled).
+            </summary>
+            <param name="pGrabber">The DistanceGrabber that is pulling this distance grabbable.</param>
+            <param name="pHitPoint">The 'hit point' the grabber targeted.</param>
+        </member>
+        <member name="M:GrabSystem.DistanceGrabbable.ClearTarget">
+            <summary>Clears any target of the DistanceGrabbable.</summary>
+        </member>
+        <member name="M:GrabSystem.DistanceGrabbable.Highlight(GrabSystem.Grabber)">
+            <summary>Tells this DistanceGrabbable that pGrabber has started highlighting it (if it is not already highlighting it).</summary>
+            <param name="pGrabber"></param>
+        </member>
+        <member name="M:GrabSystem.DistanceGrabbable.Unhighlight(GrabSystem.Grabber)">
+            <summary>Tells this DistanceGrabbable that pGrabber has stopped highlighting it (if it is already highlighting it).</summary>
+            <param name="pGrabber"></param>
+        </member>
+        <member name="M:GrabSystem.DistanceGrabbable.GetHighlightedBy(System.Int32)">
+            <summary>Returns the Grabber that is highlighting this distance grabbable by index.</summary>
+            <param name="pIndex"></param>
+        </member>
+        <member name="M:GrabSystem.DistanceGrabbable.StartDistanceGrab(UnityEngine.Vector3)">
+            <summary>Starts a distance grab.</summary>
+            <param name="pHitPoint">The world space 'hit point' the grabber targeted.</param>
+        </member>
+        <member name="M:GrabSystem.DistanceGrabbable.StopDistanceGrab">
+            <summary>Stops a distance grab.</summary>
+        </member>
+        <member name="M:GrabSystem.DistanceGrabbable.OnDistanceGrabStarted(UnityEngine.Vector3)">
+            <summary>Invoked when a distance grab is started.</summary>
+            <param name="pHitPoint">The world space 'hit point' the grabber targeted in world space.</param>
+        </member>
+        <member name="M:GrabSystem.DistanceGrabbable.OnDistanceGrabStopped">
+            <summary>Invoked when a distance grab is stopped.</summary>
+        </member>
+        <member name="T:GrabSystem.DistanceGrabber">
+            <summary>A component that is attached to the same GameObject as a Grabber to enable it to grab DistanceGrabbable objects from a distance.</summary>
+            Author: Mathew Aloisio
+        </member>
+        <member name="P:GrabSystem.DistanceGrabber.Grabber">
+            <summary>A reference to the Grabber associated with this DistanceGrabber.</summary>
+        </member>
+        <member name="P:GrabSystem.DistanceGrabber.GrabTarget">
+            <summary>A reference to the Transform this distance grabber will teleport or pull distance grabbables to.</summary>
+        </member>
+        <member name="P:GrabSystem.DistanceGrabber.Pulling">
+            <summary>A reference to the DistanceGrabbable currently being pulled by this component, or null.</summary>
+        </member>
+        <member name="E:GrabSystem.DistanceGrabber.CanDistanceGrabDelegate">
+            <summary>
+            A delegate even that allows distance grab permissions to be overridden by subscribing to this event and modifying the 'ref bool' argument (argument 3).
+            Arg0: Grabber         - The Grabber doing the grabbing. This Grabber is guarenteed to have a DistanceGrabber component.
+            Arg1: GrabbableObject - The GrabbableObject being distance grabbed. This GrabbableObject is guarenteed to have a DistanceGrabbable component.
+            Arg2: ref bool        - The reference to a boolean that when changed to false (or true) forces distance grabs for this object o be denied (or approved).
+            </summary>
+        </member>
+        <member name="M:GrabSystem.DistanceGrabber.CanDistanceGrab(GrabSystem.DistanceGrabbable)">
+            <summary>Returns true if this Grabber can distance grab pGrabbable, otherwise false.</summary>
+            <param name="pGrabbable"></param>
+            <returns>true if this Grabber can distance grab pGrabbable, otherwise false.</returns>
+        </member>
+        <member name="M:GrabSystem.DistanceGrabber.StartPull(GrabSystem.DistanceGrabbable)">
+            <summary>
+            Stops any existing pull operation and starts pulling the DistanceGrabbable, pGrabbable.
+            NOTE: This method does not check grab permissions, see 'bool CanGrab(DistanceGrabbable)'.
+            </summary>
+            <param name="pGrabbable"></param>
+        </member>
+        <member name="M:GrabSystem.DistanceGrabber.StartPull(GrabSystem.DistanceGrabbable,UnityEngine.Vector3)">
+            <summary>
+            Stops any existing pull operation and starts pulling the DistanceGrabbable, pGrabbable.
+            NOTE: This method does not check grab permissions, see 'bool CanGrab(DistanceGrabbable)'.
+            </summary>
+            <param name="pGrabbable"></param>
+            <param name="pHitPoint">The hit point the pull was started from.</param>
+        </member>
+        <member name="M:GrabSystem.DistanceGrabber.StopPull">
+            <summary>Stops any existing pull operation.</summary>
+        </member>
+        <member name="T:GrabSystem.ForceDistanceGrabbable">
+            <summary>
+            A component that is derived from 'DistanceGrabbable' that allows for force based grabbing of a GrabbableObject that also has a Rigidbody component.
+            Modes:
+            Instant - Teleports the object to the grabber and grabs it instantly (as a normal DistanceGrabbable would).
+            Arch    - Uses physics forces to pull the GameObject as an arch.
+            </summary>
+            Author: Mathew Aloisio
+        </member>
+        <member name="F:GrabSystem.ForceDistanceGrabbable.PullMode.Instant">
+            <summary>Instantly teleport the distance grabbable to the Grabber.</summary>
+        </member>
+        <member name="F:GrabSystem.ForceDistanceGrabbable.PullMode.Arch">
+            <summary>Use physics to pull the distance grabbable in an arch.</summary>
+        </member>
+        <member name="F:GrabSystem.ForceDistanceGrabbable.m_InitialVelocityApplied">
+            <summary>Tracks whether or not initial velocity has been applied after the start of a distance grab. This is to ensure it is only added once since it is recommended to add it in FixedUpdate().</summary>
+        </member>
+        <member name="F:GrabSystem.ForceDistanceGrabbable.m_FixedDeltaTimeSincePull">
+            <summary>Cumulatively tracks Time.fixedDeltaTime that has passed each FixedUpdate() since the pull started.</summary>
+        </member>
+        <member name="F:GrabSystem.ForceDistanceGrabbable.m_LastPullVelocity">
+            <summary>The last pull velocity applied to the force distance grabbable.</summary>
+        </member>
+        <member name="M:GrabSystem.ForceDistanceGrabbable.CalculateTrajectory(UnityEngine.Vector3,UnityEngine.Vector3,System.Single)">
+            <summary>Calculates the trajectory velocity from the target to the origin and returns it as a Vector3.</summary>
+            <param name="pOrigin"></param>
+            <param name="pTarget"></param>
+            <param name="pArch"></param>
+            <returns>a Vector3 representing the trajectory velocity from the target to the origin.</returns>
+        </member>
+        <member name="T:GrabSystem.GrabbableChildObject">
+            <summary>
+            A component that makes a GrabbableObject grabbable via a child collider.
+            </summary>
+            Author: Mathew Aloisio
+        </member>
+        <member name="T:GrabSystem.GrabbableObject">
+            <summary>
+            A component that makes an object grabbable by a Grabber.
+            
+            NOTE: While in GrabMode.MoveObject the object will move based on the most recent grabbing hand.
+            </summary>
+            Author: Mathew Aloisio
+        </member>
+        <member name="T:GrabSystem.GrabbableObject.GrabMode">
+            <summary>The mode used when grabbing this object.</summary>
+        </member>
+        <member name="F:GrabSystem.GrabbableObject.GrabMode.None">
+            <summary>Do nothing while grabbing.</summary>
+        </member>
+        <member name="F:GrabSystem.GrabbableObject.GrabMode.MaintainOffset">
+            <summary>Maintain the grab offset of the Grabber relative to 'MaintainGrabTransform'.</summary>
+        </member>
+        <member name="F:GrabSystem.GrabbableObject.GrabMode.MoveObject">
+            <summary>Move the grabbed object kinematically.</summary>
+        </member>
+        <member name="T:GrabSystem.GrabbableObject.GrabModeChangedUnityEvent">
+            <summary>
+            Arg0: GrabMode - The old grab mode.
+            Arg1: GrabMode - The new grab mode.
+            </summary>
+        </member>
+        <member name="P:GrabSystem.GrabbableObject.Rigidbody">
+            <summary>The Rigidbody component that on the same GameObject as this GrabbableObject, otherwise null if the grabbable is not a Rigidbody.</summary>
+        </member>
+        <member name="P:GrabSystem.GrabbableObject.HeldByCount">
+            <summary>the number of hands currently holding the GrabbableObject.</summary>
+        </member>
+        <member name="P:GrabSystem.GrabbableObject.MaintainGrabTransform">
+            <summary>A reference to the Transform a hand that grabs this object will maintain it's offset relative to when enabled. If null the grab point is used instead.</summary>
+        </member>
+        <member name="P:GrabSystem.GrabbableObject.CanBeGrabbed">
+            <summary>Returns true if this GrabbableObject can be grabbed, otherwise false. (NOTE: Use CanGrab(Grabber) methods instead to test for grabbability by specific Grabbers, this only tests for global 'can grab' properties that apply to any Grabbers.)</summary>
+        </member>
+        <member name="P:GrabSystem.GrabbableObject.OffsetAtGrab">
+            <summary>Returns 'transform.position - grabber.transform.position' at the time of grab. This offset is in the grabbers local space.</summary>
+        </member>
+        <member name="P:GrabSystem.GrabbableObject.RotationOffsetAtGrab">
+            <summary>Returns the rotation offset at the time of grab. This offset is in the grabbers local space.</summary>
+        </member>
+        <member name="F:GrabSystem.GrabbableObject.MaintainOffsetOverrideDelegate">
+            <summary>
+            A delegate that allows the 'Maintain Offset' behaviour to be overridden for this GrabbableObject, when the reference-passed boolean is set to true the default 'Maintain Offset' behaviour will be skipped.
+            This is useful for implementing things such as advanced maintained grab positions that go beyond the scope of the default settings of the GrabbableObject component.
+            Arg0: Grabber           - The Grabber who is grabbing the object.
+            Arg1: GrabbableObject   - The GrabbableObject being grabbed.
+            Arg2: ref bool          - The boolean that controls whether or not to skip the default 'Maintain Offset' behaviour. When true the default behaviour is skipped.
+            </summary>
+        </member>
+        <member name="F:GrabSystem.GrabbableObject.OverrideGrabOffsetDelegate">
+            <summary>
+            A delegate that is invoked whenever GetGrabOffset(Grabber) is invoked.
+            This is useful for implementing custom behaviours for overriding a grab offset for a GrabbableObject via code.
+            Arg0: Grabber           - The Grabber who is grabbing the object.
+            Arg1: GrabbableObject   - The GrabbableObject being grabbed.
+            Arg2: ref Vector3       - A reference to the returned grab offset in the grabbers local space.
+            </summary>
+        </member>
+        <member name="F:GrabSystem.GrabbableObject.OverrideGrabEulerOffsetDelegate">
+            <summary>
+            A delegate that is invoked whenever GetGrabEulerOffset(Grabber) is invoked.
+            This is useful for implementing custom behaviours for overriding a grab euler angle offset for a GrabbableObject via code.
+            Arg0: Grabber           - The Grabber who is grabbing the object.
+            Arg1: GrabbableObject   - The GrabbableObject being grabbed.
+            Arg2: ref Vector3       - A reference to the returned grab euler offset in the grabbers local space.
+            </summary>
+        </member>
+        <member name="F:GrabSystem.GrabbableObject.m_CachedMass">
+            <summary>The cached mass value for this GrabbableObjects Rigidbody component (if it has one).</summary>
+        </member>
+        <member name="F:GrabSystem.GrabbableObject.m_HeldBy">
+            <summary>A list of Grabbers that are currently holding this object.</summary>
+        </member>
+        <member name="M:GrabSystem.GrabbableObject.SetPositionAndRotation(UnityEngine.Vector3,UnityEngine.Quaternion)">
+            <summary>Sets the position and rotation of this GrabbableObject (and its Rigidbody(s) if relevant.)</summary>
+            <param name="pPosition"></param>
+            <param name="pRotation"></param>
+        </member>
+        <member name="M:GrabSystem.GrabbableObject.UpdateCachedMass">
+            <summary>If this grabbable has a valid Rigidbody overrides the cached 'default' mass value for the object with 'Rigidbody.mass'.</summary>
+        </member>
+        <member name="M:GrabSystem.GrabbableObject.ForceGrabbersRelease">
+            <summary>Forces all Grabbers to release this GrabbableObject.</summary>
+        </member>
+        <member name="M:GrabSystem.GrabbableObject.ForceGrabbersReleaseNoThrow">
+            <summary>Forces all Grabbers to release this GrabbableObject without throwing.</summary>
+        </member>
+        <member name="M:GrabSystem.GrabbableObject.GetGrabOffset(GrabSystem.Grabber)">
+            <summary>
+            Returns a Vector3 representing the grab offset in the pGrabbers local space for this GrabbableObject.
+            Takes into account axis flip settings.
+            
+            NOTE: This method invokes 'OverrideGrabOffsetDelegate(Grabber, GrabbableObject, ref Vector3)' for easy overriding.
+            </summary>
+            <param name="pGrabber"></param>
+            <returns>a Vector3 representing the grab offset in the pGrabbers local space for this GrabbableObject.</returns>
+        </member>
+        <member name="M:GrabSystem.GrabbableObject.GetGrabEulerOffset(GrabSystem.Grabber)">
+            <summary>
+            Returns a Vector3 representing the grab euler offset in the pGrabbers local space for this GrabbableObject.
+            Takes into account axis flip settings.
+            
+            NOTE: This method invokes 'OverrideGrabEulerOffsetDelegate(Grabber, GrabbableObject, ref Vector3)' for easy overriding.
+            </summary>
+            <param name="pGrabber"></param>
+            <returns>a Vector3 representing the grab euler offset in the pGrabbers local space for this GrabbableObject.</returns>
+        </member>
+        <member name="M:GrabSystem.GrabbableObject.GetHeldBy(System.Int32)">
+            <summary>Returns the Grabber in the given 'held by' index.</summary>
+            <param name="pIndex"></param>
+            <returns>the Grabber in the given 'held by' index.</returns>
+        </member>
+        <member name="M:GrabSystem.GrabbableObject.MaintainOffsetFrom(GrabSystem.Grabber,UnityEngine.Transform)">
+            <summary>Maintains a pGrabber at pMaintainTransform.</summary>
+            <param name="pGrabber"></param>
+            <param name="pMaintainTransform"></param>
+        </member>
+        <member name="M:GrabSystem.GrabbableObject.SetGrabEnabled(System.Boolean)">
+            <summary>Sets the 'grabEnabled' field for the grabbable object. Useful for use with Unity Editor events.</summary>
+            <param name="pEnabled"></param>
+        </member>
+        <member name="M:GrabSystem.GrabbableObject.UseMoveObjectGrabMode">
+            <summary>Forces the GrabbableObject to use the 'MoveObject' grab mode.</summary>
+        </member>
+        <member name="M:GrabSystem.GrabbableObject.UseMaintainOffsetGrabMode">
+            <summary>Forces the GrabbableObject to use the 'MaintainOffset' grab mode.</summary>
+        </member>
+        <member name="M:GrabSystem.GrabbableObject.CanGrab(GrabSystem.Grabber)">
+            <summary>Returns true if this GrabbableObject can be grabbed by pGrabber, otherwise false. (NOTE: This only checks conditions relevant to the grabbable object, the Grabber may have its own conditions.)</summary>
+            <param name="pGrabber"></param>
+            <returns>true if this GrabbableObject can be grabbed by pGrabber, otherwise false.</returns>
+        </member>
+        <member name="M:GrabSystem.GrabbableObject.Internal_OnPreGrabbed(GrabSystem.Grabber)">
+            <summary>An internal callback that is invoked just before this GrabbableObject is grabbed.</summary>
+            <param name="pGrabbedBy">The Grabber that grabbed this object.</param>
+        </member>
+        <member name="M:GrabSystem.GrabbableObject.Internal_OnGrabbed(GrabSystem.Grabber)">
+            <summary>An internal callback that is invoked whenever this GrabbableObject is grabbed.</summary>
+            <param name="pGrabbedBy">The Grabber that grabbed this object.</param>
+        </member>
+        <member name="M:GrabSystem.GrabbableObject.Internal_OnPreReleased(GrabSystem.Grabber)">
+            <summary>An internal callback that is invoked just before this GrabbableObject is released.</summary>
+            <param name="pReleasedBy">The Grabber that released this object.</param>
+        </member>
+        <member name="M:GrabSystem.GrabbableObject.Internal_OnReleased(GrabSystem.Grabber)">
+            <summary>An internal callback that is invoked whenever this GrabbableObject is released.</summary>
+            <param name="pReleasedBy">The Grabber that released this object.</param>
+        </member>
+        <member name="M:GrabSystem.GrabbableObject.Internal_OnGrabbingJointBroken(GrabSystem.Grabber)">
+            <summary>An internal callback that is invoked whenever this GrabbableObject has a 'grabbing joint' that is holding it break.</summary>
+            <param name="pGrabber"></param>
+        </member>
+        <member name="T:GrabSystem.ConditionalGrabber">
+            <summary>
+            The base component for all grabbers that implement the 'ConditionalGrab()' method.
+            Also implements repeat grab attempt routine functionality.
+            
+            The 'ShouldInterruptGrab' event uses a reference to a boolean value as its first argument, if a subscribing callback makes this boolean true any conditional grab will be interrupted.
+            Note that interrupting a grab routine does not end the grab routine, it simply prevents it from attempting any grab.
+            </summary>
+            Author: Mathew Aloisio
+        </member>
+        <member name="P:GrabSystem.ConditionalGrabber.GrabRoutine">
+            <summary>A reference to the coroutine for an ongoing continous grab attempt or null if none ongoing.</summary>
+        </member>
+        <member name="E:GrabSystem.ConditionalGrabber.ShouldInterruptGrabRoutineDelegate">
+            <summary>A simple event that has a single argument, a reference to a boolean value, if this boolean value becomes true the conditional grab is interrupted.</summary>
+        </member>
+        <member name="M:GrabSystem.ConditionalGrabber.StartGrabRoutine">
+            <summary>Starts a grab routine that continuously attempts grabs til successful or stopped.</summary>
+        </member>
+        <member name="M:GrabSystem.ConditionalGrabber.StopGrabRoutine">
+            <summary>Stops any ongoing continous grab attempt routine.</summary>
+        </member>
+        <member name="M:GrabSystem.ConditionalGrabber.AttemptGrab">
+            <summary>A simple wrapper for TryGrab() that has no return value. Useful for use with Unity Editor events.</summary>
+        </member>
+        <member name="M:GrabSystem.ConditionalGrabber.TryGrab">
+            <summary>Attempts a conditional grab using the overrideable 'ConditionalGrab()' method..</summary>
+            <returns>A reference to the GrabbableObject that was grabbed, otherwise null.</returns>
+        </member>
+        <member name="M:GrabSystem.ConditionalGrabber.CheckInterruptGrabRoutine">
+            <summary>
+            Polls all 'ShouldInterruptGrabRoutineDelegate' event followers (and any other and returns true if this component will interrupt a grab based on the subscribers to the 'ShouldInterruptGrabRoutineDelegate' event, otherwise false.
+            Note that interrupted grab routines will not end the routine, they will simply prevent the routine from attempting a grab.
+            </summary>
+            <returns>true if this component will interrupt a grab routine based on the subscribers to the 'ShouldInterruptGrab' event, otherwise false.</returns>
+        </member>
+        <member name="M:GrabSystem.ConditionalGrabber.ConditionalGrab">
+            <summary>Performs a conditional grab attempt and returns the GrabbableObject that was grabbed, otherwise null.</summary>
+            <returns>the GrabbableObject that was grabbed, otherwise null.</returns>
+        </member>
+        <member name="M:GrabSystem.ConditionalGrabber.Coroutine_RepeatTryGrab">
+            <summary>A coroutine that will repeat grab attempts til successful or cancelled.</summary>
+            <returns>IEnumerator for the coroutine.</returns>
+        </member>
+        <member name="T:GrabSystem.Grabber">
+            <summary>
+            The base component for all grabbers.
+            </summary>
+            Author: Mathew Aloisio
+        </member>
+        <member name="P:GrabSystem.Grabber.Grabbing">
+            <summary>A reference to the object being grabbed by this hand, otherwise null if nothing being grabbed.</summary>
+        </member>
+        <member name="P:GrabSystem.Grabber.GrabbingJoint">
+            <summary>A reference to the Joint being used to connect a Rigidbody-containing GrabbableObject, otherwise null.</summary>
+        </member>
+        <member name="P:GrabSystem.Grabber.AnchorTransform">
+            <summary>Returns the Transform grabbables are anchored to.</summary>
+        </member>
+        <member name="P:GrabSystem.Grabber.GrabberPivot">
+            <summary>Returns the Transform that is used as the pivot point for the Grabber. This is mostly used when positioning the Grabber on a GrabbableObjects 'MaintainGrabTransform' reference.</summary>
+        </member>
+        <member name="P:GrabSystem.Grabber.GrabPoint">
+            <summary>A reference to the Transform for the object that was created at the grabber position when the grab occured. Parented to the grabbed object, this means 'GrabPoint' maintains a reference of the hands relative position relative to the grabbed object..</summary>
+        </member>
+        <member name="P:GrabSystem.Grabber.IsGrabbingNonKinematicRigidbody">
+            <summary>Returns true if the Grabber is currently grabbing a non-kinematic Rigidbody, otherwise false.</summary>
+        </member>
+        <member name="P:GrabSystem.Grabber.JointCount">
+            <summary>Returns the number of joints that are created by this Grabber (No guarentee that some joint entries will not be null if they are destroyed without using Grabber.DestroyJoint).</summary>
+        </member>
+        <member name="P:GrabSystem.Grabber.CanRelease">
+            <summary>
+            Returns true if this Grabber may release the object it is 'Grabbing', otherwise false.
+            The 'grabLocked' boolean or SetGrabLocked(bool) method may be used to prevent a release.
+            NOTE: The 'CanReleaseDelegate' event may be used to override release permissions.
+            </summary>
+        </member>
+        <member name="E:GrabSystem.Grabber.CanGrabDelegate">
+            <summary>A simple event that is passed a boolean by reference that may be overridden to override whether or not a grab can occur.</summary>
+        </member>
+        <member name="E:GrabSystem.Grabber.CanReleaseDelegate">
+            <summary>A simple event that is passed a boolean by reference that may be overridden to override whether or not a non-forced release can occur.</summary>
+        </member>
+        <member name="F:GrabSystem.Grabber.m_Joints">
+            <summary>A list of Joints that were created by this Grabber.</summary>
+        </member>
+        <member name="F:GrabSystem.Grabber.m_GrabbingJointValid">
+            <summary>Tracks whether or not a GrabbingJoint is expected to be non-null, if true and GrabbingJoint is null then the joint broke. </summary>
+        </member>
+        <member name="F:GrabSystem.Grabber.m_GrabbingJoint">
+            <summary>The hidden backing field for the 'GrabbingJoint' property.</summary>
+        </member>
+        <member name="M:GrabSystem.Grabber.Grab(GrabSystem.GrabbableObject)">
+            <summary>Forces a GrabbableObject to be grabbed, if an object is already grabbed it is (attempted to be) released. Same as calling 'Grab(pGrabbable, null)'.</summary>
+            <param name="pGrabbable"></param>
+        </member>
+        <member name="M:GrabSystem.Grabber.Grab(GrabSystem.GrabbableObject,UnityEngine.Collider)">
+            <summary>Forces a GrabbableObject to be grabbed, if an object is already being grabbed it is (attempted to be) released.</summary>
+            <param name="pGrabbable">The Grabbable that was grabbed.</param>
+            <param name="pGrabCollider">The Collider that was grabbed.</param>
+        </member>
+        <member name="M:GrabSystem.Grabber.GrabAtOffset(GrabSystem.GrabbableObject,UnityEngine.Vector3,UnityEngine.Quaternion)">
+            <summary>If pGrabbable is a movable object, teleports it to pOffset and pRotation local space (angle) offsets relative to the Grabber's 'transform', then grabs.</summary>
+            <param name="pGrabbable">The grabbable object.</param>
+            <param name="pOffset">The local space offset.</param>
+            <param name="pRotation">The local space rotation.</param>
+        </member>
+        <member name="M:GrabSystem.Grabber.ReleaseNoThrow">
+            <summary>Releases the currently grabbed object without throwing it only if 'CanRelease()' returns true.</summary>
+        </member>
+        <member name="M:GrabSystem.Grabber.Release">
+            <summary>Releases the currently grabbed object applying any relevant throw forces only if 'CanRelease()' returns true.</summary>
+        </member>
+        <member name="M:GrabSystem.Grabber.ForceReleaseNoThrow">
+            <summary>Releases the currently grabbed object without throwing it.</summary>
+        </member>
+        <member name="M:GrabSystem.Grabber.ForceRelease">
+            <summary>Releases the currently grabbed object applying any relevant throw forces.</summary>
+        </member>
+        <member name="M:GrabSystem.Grabber.GetOffsetFromGrabber(GrabSystem.GrabbableObject)">
+            <summary>Returns the offset of pGrabbable from 'this' Grabber as a Vector3 in local space of 'this' Grabber.</summary>
+            <param name="pGrabbable">The grabbable object.</param>
+            <returns>the offset of pGrabbable from 'this' Grabber as a Vector3 in local space of 'this' Grabber.</returns>
+        </member>
+        <member name="M:GrabSystem.Grabber.GetRelativeRotationFromGrabber(GrabSystem.GrabbableObject)">
+            <summary>Returns the relative rotation of pGrabbable from 'this' Grabber as a Quaternion.</summary>
+            <param name="pGrabbable">The grabbable object.</param>
+            <returns>the relative rotation of pGrabbable from 'this' Grabber as a Quaternion.</returns>
+        </member>
+        <member name="M:GrabSystem.Grabber.ThrowRigidbody(UnityEngine.Rigidbody,System.Single)">
+            <summary>Calculates and applies throw forces to the specified Rigidbody.</summary>
+            <param name="pRigidbody"></param>
+            <param name="pThrowForceMultiplier">A throw force multiplier to apply to the calculated throw force. Useful for scaling force for specific objects.</param>
+        </member>
+        <member name="M:GrabSystem.Grabber.CreateJoint(GrabSystem.GrabbableObject,UnityEngine.Rigidbody,System.Single,System.Single,UnityEngine.ConfigurableJoint)">
+            <summary>Creates a physics joint between a Rigidbody and the Grabber.</summary>
+            <param name="pGrabbable">The GrabbableObject being jointed to.</param>
+            <param name="pRigidbody">The Rigidbody that is being jointed to the Grabber.</param>
+            <param name="pBreakForce">The force it takes to break the joint.</param>
+            <param name="pBreakTorque">The torque it takes to break the joint.</param>
+            <param name="pGrabJointPrefab">The custom grab joint prefab to use. If null the default joint resource will be used.</param>
+            <returns>The Joint that was created.</returns>
+        </member>
+        <member name="M:GrabSystem.Grabber.GetJointAtIndex(System.Int32)">
+            <summary>Returns the Joint at the given index of the joints array for this Grabber.</summary>
+            <param name="pIndex"></param>
+            <returns>The Joint at the given index of the joints array for this Grabber.</returns>
+        </member>
+        <member name="M:GrabSystem.Grabber.DestroyJoint(UnityEngine.Joint)">
+            <summary>Destroys a Joint and removes it from this Grabbers tracked joint list if it is in it.</summary>
+            <param name="pJoint"></param>
+        </member>
+        <member name="M:GrabSystem.Grabber.DestroyAllJoints">
+            <summary>Destroys all Joints that were created by this Grabber.</summary>
+        </member>
+        <member name="M:GrabSystem.Grabber.SetGrabLocked(System.Boolean)">
+            <summary>Sets the 'grabLocked' field of this component. Useful for use with Unity editor events.</summary>
+            <param name="pLocked"></param>
+        </member>
+        <member name="M:GrabSystem.Grabber.CanGrab(GrabSystem.GrabbableObject)">
+            <summary>
+            Returns true if this Grabber can grab pGrabbable, otherwise false.
+            NOTE: By default (when not overridden) it is guarenteed that this method takes into account 'CanGrabDelegate' event overrides.
+            </summary>
+            <param name="pGrabbable"></param>
+            <returns>true if this Grabber can grab pGrabbable, otherwise false.</returns>
+        </member>
+        <member name="M:GrabSystem.Grabber.OnGrabbingJointBroken">
+            <summary>Invoked when Grabber.GrabbingJoint breaks. When overriding this careful to ensure that the 'GrabJointBroken' event is still invoked and (if desired) that any non-null 'Grabbing' object is released.</summary>
+        </member>
+        <member name="T:GrabSystem.RayGrabber">
+            <summary>
+            A component that extends a Grabber by adding the ability to attempt grabs using a raycast.
+            </summary>
+            Author: Mathew Aloisio
+        </member>
+        <member name="F:GrabSystem.RayGrabber.GrabbableEntry.grabbable">
+            <summary>The GrabbableObject reference for the pair.</summary>
+        </member>
+        <member name="F:GrabSystem.RayGrabber.GrabbableEntry.collider">
+            <summary>The Collider that may be grabbed.</summary>
+        </member>
+        <member name="F:GrabSystem.RayGrabber.GrabbableEntry.distance">
+            <summary>The distance of the grabbable according to the pair.</summary>
+        </member>
+        <member name="M:GrabSystem.RayGrabber.BoxCastData.#ctor">
+            <summary>Instantiaets a BoxCastData instance.</summary>
+        </member>
+        <member name="M:GrabSystem.RayGrabber.BoxCastData.#ctor(GrabSystem.RayGrabber.BoxCastData)">
+            <summary>Instantiates a copy of some other BoxCastData, pOther.</summary>
+            <param name="pOther"></param>
+        </member>
+        <member name="F:GrabSystem.RayGrabber.m_CollisionResult">
+            <summary>Stores the result of a Physics.OverlapBoxNonAlloc with space for up to 10 colliders.</summary>
+        </member>
+        <member name="F:GrabSystem.RayGrabber.m_CollisionResultCount">
+            <summary>The number of valid collision results in the array. </summary>
+        </member>
+        <member name="M:GrabSystem.RayGrabber.GrabByPalmTrace">
+            <summary>
+            Attempts to grab any nearby objects using a ray trace from the palm.
+            Returns the GrabbableObject that was grabbed or null if nothing was grabbed.
+            </summary>
+            <returns>A reference to the GrabbableObject that was grabbed, otherwise null if nothing.</returns>
+        </member>
+        <member name="M:GrabSystem.RayGrabber.ConditionalGrab">
+            <summary>Attempts to grab using a raytrace.</summary>
+            <returns>The GrabbableObject that was grabbed, otherwise null.</returns>
+        </member>
+        <member name="M:GrabSystem.RayGrabber.DrawBoxCastDataGizmo(GrabSystem.RayGrabber.BoxCastData,UnityEngine.Color)">
+            <summary>Draws the given box cast data. Uses pBoxCastData.origin to determine position, rotation, and direction.</summary>
+            <param name="pBoxCastData"></param>
+            <param name="pColor">The color to draw the gizmo in.</param>
+        </member>
+        <member name="M:GrabSystem.RayGrabber.DrawBoxCastDataGizmoAt(GrabSystem.RayGrabber.BoxCastData,UnityEngine.Color,UnityEngine.Vector3,UnityEngine.Quaternion,UnityEngine.Vector3)">
+            <summary>Draws the given box cast data at the given position and rotation in the given direction.</summary>
+            <param name="pBoxCastData"></param>
+            <param name="pColor">The color to draw the gizmo in.</param>
+            <param name="pPosition">The position to draw the box cast at.</param>
+            <param name="pRotation">The rotation to draw the box cast with.</param>
+            <param name="pDirection">The box cast direction.</param>
+        </member>
+        <member name="T:GrabSystem.Math.FloatMath">
+            <summary>
+            A public static class that provides helper functions for floating-point related math operations.
+            </summary>
+            Author: Mathew Aloisio
+        </member>
+        <member name="F:GrabSystem.Math.FloatMath.Comparator.GT">
+            <summary>Greater than.</summary>
+        </member>
+        <member name="F:GrabSystem.Math.FloatMath.Comparator.GTE">
+            <summary>Greater than or equal to.</summary>
+        </member>
+        <member name="F:GrabSystem.Math.FloatMath.Comparator.LT">
+            <summary>Less than.</summary>
+        </member>
+        <member name="F:GrabSystem.Math.FloatMath.Comparator.LTE">
+            <summary>Less than or equal to.</summary>
+        </member>
+        <member name="F:GrabSystem.Math.FloatMath.Comparator.APPRX">
+            <summary>Approximately equal to.</summary>
+        </member>
+        <member name="F:GrabSystem.Math.FloatMath.Comparator.NAPPRX">
+            <summary>Not approximately equal to.</summary>
+        </member>
+        <member name="M:GrabSystem.Math.FloatMath.CompareFloat(System.Single,System.Single,GrabSystem.Math.FloatMath.Comparator)">
+            <summary>Compares the LHS float to the RHS float using pLHS pComparator pRHS.</summary>
+            <param name="pLHS">The left hand side float.</param>
+            <param name="pRHS">The right hand side float.</param>
+            <param name="pComparator">The Comparator to use.</param>
+            <returns>true if the comparator condition when comparing pLHS to pRHS is true, otherwise false.</returns>
+        </member>
+        <member name="T:GrabSystem.Math.VectorMath">
+            <summary>A static class that contains vector math functions.</summary>
+            Author: Mathew Aloisio
+        </member>
+        <member name="M:GrabSystem.Math.VectorMath.GetSignedDistanceInDirection(UnityEngine.Vector3,UnityEngine.Vector3,UnityEngine.Vector3)">
+            <summary>
+            Returns the signed distance between two vectors pA and pB in a given direction, pDirection.
+            </summary>
+            <param name="pDirection">The world space direction.</param>
+            <param name="pA"></param>
+            <param name="pB"></param>
+            <returns></returns>
+        </member>
+        <member name="M:GrabSystem.Math.VectorMath.ClampAngle(System.Single,System.Single,System.Single)">
+            <summary>
+            Returns a clamped angle between -180f and 180f.
+            </summary>
+            <param name="pAngle"></param>
+            <param name="pMinimum"></param>
+            <param name="pMaximum"></param>
+            <returns>a clamped angle between -180f and 180f.</returns>
+        </member>
+        <member name="T:GrabSystem.Poses.MaintainOffsetByGrabOffset">
+            <summary>
+            A component that is attached to the same GameObject as a GrabbableObject (that is assumed to be using the 'Maintain Offset' grab mode) which overrides the maintain offset behaviour allowing more complex behaviours to be defined using the grab offset of the Grabber from the grabbable at the time it grabbed the GrabbableObject.
+            NOTE: This component works in the grabbables local space by comparing the 'signed distance in direction' of the grabber from the grabbable at the time of grab using the comparator specified in the entry.
+            </summary>
+            Author: Intuitive Gaming Solutions
+        </member>
+        <member name="M:GrabSystem.Poses.MaintainOffsetByGrabOffset.Entry.Internal_OnUsed(GrabSystem.Grabber)">
+            <summary>Invokes the 'EntryUsed' event.</summary>
+            <param name="pGrabber"></param>
+        </member>
+        <member name="F:GrabSystem.Poses.MaintainOffsetByGrabOffset.GrabInfo.entry">
+            <summary>A reference to the entry whose conditions were met.</summary>
+        </member>
+        <member name="F:GrabSystem.Poses.MaintainOffsetByGrabOffset.m_GrabInfos">
+            <summary>Tracks how the Grabber was grabbed by a given Grabber.</summary>
+        </member>
+        <member name="P:GrabSystem.Poses.MaintainOffsetByGrabOffset.Grabbable">
+            <summary>Returns the GrabbableObject reference associated with this component.</summary>
+        </member>
+        <member name="F:GrabSystem.Poses.MaintainOffsetByGrabOffset.m_Grabbable">
+            <summary>The hidden backing field for the 'Grabbable' property.</summary>
+        </member>
+        <member name="M:GrabSystem.Poses.MaintainOffsetByGrabOffset.CheckEntryConditions(GrabSystem.Poses.MaintainOffsetByGrabOffset.Entry,GrabSystem.Grabber,GrabSystem.GrabbableObject)">
+            <summary>A public method that checks if the conditions are met for the given entry, pEntry, based on the relative offset of pGrabber from pGrabbable in pGrabbable local space.</summary>
+            <param name="pEntry"></param>
+            <param name="pGrabber"></param>
+            <param name="pGrabbable"></param>
+            <returns>true if the conditions for this entry are met, otherwise false.</returns>
+        </member>
+        <member name="T:GrabSystem.Poses.MaintainOffsetByProjectedAngle">
+            <summary>
+            A component that is attached to the same GameObject as a GrabbableObject (that is assumed to be using the 'Maintain Offset' grab mode) which overrides the maintain offset behaviour allowing more complex behaviours to be defined using the relative angle of the GrabbableObject from the Grabber at the time it is grabbed.
+            NOTE: This component works by projecting the 'grabber' onto the local 'axis' in local space of the grabbable and getting the hands angle around that axis.
+            </summary>
+            Author: Intuitive Gaming Solutions
+        </member>
+        <member name="M:GrabSystem.Poses.MaintainOffsetByProjectedAngle.Entry.Internal_OnUsed(GrabSystem.Grabber)">
+            <summary>Invokes the 'EntryUsed' event.</summary>
+            <param name="pGrabber"></param>
+        </member>
+        <member name="F:GrabSystem.Poses.MaintainOffsetByProjectedAngle.GrabInfo.entry">
+            <summary>A reference to the entry whose conditions were met.</summary>
+        </member>
+        <member name="F:GrabSystem.Poses.MaintainOffsetByProjectedAngle.m_GrabInfos">
+            <summary>Tracks how the Grabber was grabbed by a given Grabber.</summary>
+        </member>
+        <member name="P:GrabSystem.Poses.MaintainOffsetByProjectedAngle.Grabbable">
+            <summary>Returns the GrabbableObject reference associated with this component.</summary>
+        </member>
+        <member name="F:GrabSystem.Poses.MaintainOffsetByProjectedAngle.m_Grabbable">
+            <summary>The hidden backing field for the 'Grabbable' property.</summary>
+        </member>
+        <member name="M:GrabSystem.Poses.MaintainOffsetByProjectedAngle.CheckEntryConditions(GrabSystem.Poses.MaintainOffsetByProjectedAngle.Entry,GrabSystem.Grabber,GrabSystem.GrabbableObject)">
+            <summary>A public method that checks if the conditions are met for the given entry, pEntry, based on the relative offset of pGrabber from pGrabbable in pGrabbable local space.</summary>
+            <param name="pEntry"></param>
+            <param name="pGrabber"></param>
+            <param name="pGrabbable"></param>
+            <returns>true if the conditions for this entry are met, otherwise false.</returns>
+        </member>
+        <member name="T:GrabSystem.Triggers.GrabArea">
+            <summary>
+            A simple component that uses the 'OnTriggerEnter' and 'OnTriggerExit' callbacks to allow a ConditionalGrabber that enters a trigger
+            to automatically grab a specified GrabbableObject when it fails to grab anything else after a grab attempt while it remains in the trigger.
+            </summary>
+            Author: Mathew Aloisio
+        </member>
+        <member name="F:GrabSystem.Triggers.GrabArea.m_GrabbersInArea">
+            <summary>A list of all ConditionalGrabber components that are in the 'grab area' trigger.</summary>
+        </member>
+        <member name="M:GrabSystem.Triggers.GrabArea.OnGrabberEnteredArea(GrabSystem.ConditionalGrabber)">
+            <summary>Invoked whenever a ConditionalGrabber enters the GrabArea trigger.</summary>
+            <param name="pGrabber"></param>
+        </member>
+        <member name="M:GrabSystem.Triggers.GrabArea.OnGrabberExitedArea(System.Int32,GrabSystem.ConditionalGrabber)">
+            <summary>Invoked whenever a ConditionalGrabber exits the GrabArea trigger.</summary>
+            <param name="pIndex">The grabbers index in the 'grabbers in area' list.</param>
+            <param name="pGrabber"></param>
+        </member>
+        <member name="M:GrabSystem.Triggers.GrabArea.OnGrabAttemptFailed(GrabSystem.Grabber)">
+            <summary>Invoked after a Grabber fails a conditonal grab attempt.</summary>
+            <param name="pGrabber">The Grabber that invoked the callback.</param>
+        </member>
+        <member name="T:GrabSystem.Triggers.GrabberReleaseArea">
+            <summary>
+            A simple component that uses the 'OnTriggerEnter' and 'OnTriggerExit' callbacks to force a grabber to release on object when it enters the relevnat trigger.
+            Optionally prevents the hand from grabbing while in the release.
+            </summary>
+            Author: Mathew Aloisio
+        </member>
+        <member name="F:GrabSystem.Triggers.GrabberReleaseArea.ReleaseMode.None">
+            <summary>No  release.</summary>
+        </member>
+        <member name="F:GrabSystem.Triggers.GrabberReleaseArea.ReleaseMode.NoThrow">
+            <summary>Release, but no throw force.</summary>
+        </member>
+        <member name="F:GrabSystem.Triggers.GrabberReleaseArea.ReleaseMode.Release">
+            <summary>Release with throwing force.</summary>
+        </member>
+        <member name="F:GrabSystem.Triggers.GrabberReleaseArea.m_GrabbersInArea">
+            <summary>A list of all Grabber components that are in the 'area' trigger.</summary>
+        </member>
+        <member name="M:GrabSystem.Triggers.GrabberReleaseArea.OnGrabberEnteredArea(GrabSystem.Grabber)">
+            <summary>Invoked whenever a Grabber enters the area trigger.</summary>
+            <param name="pGrabber"></param>
+        </member>
+        <member name="M:GrabSystem.Triggers.GrabberReleaseArea.OnGrabberExitedArea(System.Int32,GrabSystem.Grabber)">
+            <summary>Invoked whenever a Grabber exits the area trigger.</summary>
+            <param name="pIndex">The grabbers index in the 'grabber in area' list.</param>
+            <param name="pGrabber"></param>
+        </member>
+        <member name="M:GrabSystem.Triggers.GrabberReleaseArea.OnCanGrab(GrabSystem.Grabber,GrabSystem.GrabbableObject,System.Boolean@)">
+            <summary>Allows a Grabbers 'grab' ability to be overridden.</summary>
+            <param name="pGrabber"></param>
+            <param name="pGrabbable"></param>
+            <param name="pCanGrab"></param>
+        </member>
+        <member name="T:GrabSystem.Utility.ComponentUtility">
+            <summary>
+            A public static class that provides Compoennt related helper functions.
+            </summary>
+            Author: Mathew Aloisio
+        </member>
+        <member name="M:GrabSystem.Utility.ComponentUtility.GetCopyOf``1(UnityEngine.Component,``0)">
+            <summary>An extension method for any Component. This method copies the public, non public instance field and property values from pOther to pComponent.</summary>
+            <typeparam name="T"></typeparam>
+            <param name="pComponent"></param>
+            <param name="pOther"></param>
+            <returns>pComponent with the fields and properties copied from pOther.</returns>
+        </member>
+    </members>
+</doc>

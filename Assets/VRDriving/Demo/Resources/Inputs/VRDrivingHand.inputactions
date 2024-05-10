@@ -1,0 +1,166 @@
+{
+    "name": "VRDrivingHand",
+    "maps": [
+        {
+            "name": "Hand Actions",
+            "id": "b6e35d60-8759-4947-8946-5a97368e45d2",
+            "actions": [
+                {
+                    "name": "Grip Pressed (R)",
+                    "type": "Button",
+                    "id": "1d49c14b-53c9-4b24-9f7e-01b847117447",
+                    "expectedControlType": "Button",
+                    "processors": "",
+                    "interactions": "Press"
+                },
+                {
+                    "name": "Grip Released (R)",
+                    "type": "Button",
+                    "id": "2bcdcfe6-d375-47cf-8611-8a091d0e1373",
+                    "expectedControlType": "Button",
+                    "processors": "",
+                    "interactions": "Press(behavior=1)"
+                },
+                {
+                    "name": "Trigger Pressed (R)",
+                    "type": "Button",
+                    "id": "566d1445-1bae-41c2-8faa-0fb585d6fcf2",
+                    "expectedControlType": "Button",
+                    "processors": "",
+                    "interactions": ""
+                },
+                {
+                    "name": "Trigger Released (R)",
+                    "type": "Button",
+                    "id": "84a2eb22-abbe-42a0-bfd4-c7b23e87413e",
+                    "expectedControlType": "Button",
+                    "processors": "",
+                    "interactions": "Press(behavior=1)"
+                },
+                {
+                    "name": "Grip Pressed (L)",
+                    "type": "Button",
+                    "id": "61fbe058-5cbf-404d-843a-0ec8ef9860d0",
+                    "expectedControlType": "Button",
+                    "processors": "",
+                    "interactions": "Press"
+                },
+                {
+                    "name": "Grip Released (L)",
+                    "type": "Button",
+                    "id": "cf582500-8c04-40d2-9d63-27232968428e",
+                    "expectedControlType": "Button",
+                    "processors": "",
+                    "interactions": "Press(behavior=1)"
+                },
+                {
+                    "name": "Trigger Pressed (L)",
+                    "type": "Button",
+                    "id": "b755511b-f257-4aaf-b514-2fa5b634537f",
+                    "expectedControlType": "Button",
+                    "processors": "",
+                    "interactions": ""
+                },
+                {
+                    "name": "Trigger Released (L)",
+                    "type": "Button",
+                    "id": "a30b77df-a668-4c45-afc2-b26943033292",
+                    "expectedControlType": "Button",
+                    "processors": "",
+                    "interactions": "Press(behavior=1)"
+                }
+            ],
+            "bindings": [
+                {
+                    "name": "",
+                    "id": "01e984db-5c6e-4ba1-bf63-64226108c62c",
+                    "path": "<XRController>{RightHand}/gripPressed",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "Grip Pressed (R)",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "d58f0f49-26f0-4d2b-ac5c-2a7b7964b672",
+                    "path": "<XRController>{RightHand}/gripPressed",
+                    "interactions": "Press(behavior=1)",
+                    "processors": "",
+                    "groups": "",
+                    "action": "Grip Released (R)",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "ac5ba9c5-180f-4918-ab13-c2723ef1f96a",
+                    "path": "<XRController>{RightHand}/triggerPressed",
+                    "interactions": "Press",
+                    "processors": "",
+                    "groups": "",
+                    "action": "Trigger Pressed (R)",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "25983519-9ec1-42bb-a975-f42e07dc1cf4",
+                    "path": "<XRController>{RightHand}/triggerPressed",
+                    "interactions": "Press(behavior=1)",
+                    "processors": "",
+                    "groups": "",
+                    "action": "Trigger Released (R)",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "6a855284-0fc8-405a-985f-f12f0041792b",
+                    "path": "<XRController>{LeftHand}/gripPressed",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "Grip Pressed (L)",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "2c0621b9-0175-46e9-bb59-adf4b766d157",
+                    "path": "<XRController>{LeftHand}/gripPressed",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "Grip Released (L)",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "18c66ae0-ddb7-474b-b2c0-9857762193d8",
+                    "path": "<XRController>{LeftHand}/triggerPressed",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "Trigger Pressed (L)",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "a6662fea-66ad-443c-9170-be2698c3b9e7",
+                    "path": "<XRController>{LeftHand}/triggerPressed",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "Trigger Released (L)",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                }
+            ]
+        }
+    ],
+    "controlSchemes": []
+}
