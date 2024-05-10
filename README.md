@@ -16,22 +16,25 @@ Check out the quick 2 minute demo
 - Once you install Unity Hub, download and install Unity Editor. We recommend version 2022.3.16f1.
 
 ## Getting Started
--SUMO
+-SUMO - Step by Step Tutorial [Youtube Tutorial](https://www.youtube.com/playlist?list=PLAk8GOoajG6tKI74YID0hwjXVg8KBxNAD)
 1. Install SUMO (Version 1.18 or 1.19)
 2. Set Up SUMO Environment Variables
 3. Install Notepad ++
+4. Watch SUMO Tutorial
    
--Unity
+-Unity - Step by Step Tutorial [Youtube Tutorial](https://www.youtube.com/playlist?list=PLAk8GOoajG6veF2wQ_CJJpQXNDufEQuoA)
 1. Install Unity HUB
 2. Install Unity Editor. We recommend version 2022.3.16f1.
 3. Install Visual Studio
+4. Install Visual Studio Dependencies
+5. Watch Unity VR Tutorial  
    
--SUMO2Unity
+-SUMO2Unity - Step by Step Tutorial [Youtube Tutorial](https://www.youtube.com/playlist?list=PLAk8GOoajG6uIKpzW0R9aQ9mWXRY77azk)
 1. Download this repository as a zip file.
 2. Extract the zip file.
 3. Add the extract file in Unity Hub and open it with version 2022.3.16f1.
 4. In the editor, go to `_Project/Scenes` and open SUMO2Unity scene.
-5. Click on the play button to start the simulation.
+5. Watch SUMO2Unity Tutorial
 
 ## Usage
 - To change the simulation settings, go to `Assets/_Project/Sumo_Data`.
@@ -40,15 +43,12 @@ Check out the quick 2 minute demo
 - You can add or modify vehicles and traffic signals in the Simulation.
 
 ## Additional Help
-- How to clone a repository? [Youtube Tutorial](https://www.youtube.com/watch?v=EhxPBMQFCaI)
-- How to download Unity? [Youtube Tutorial](https://www.youtube.com/watch?v=Kh_FD0Ypdhg)
-- How to install Sumo? [Youtube Tutorial](https://www.youtube.com/watch?v=7DfVUwgUIlQ)
 - If you need more help or have any questions, feel free to create a new issue at the [Issues](https://github.com/SUMO2Unity/SUMO2Unity/issues) section. 
 
 ## Paper
-If you use SUMO2Unity, please cite our paper.
+If you use SUMO2Unity, please cite our paper (Will be online shortly).
 
-SUMO2Unity: An Open-Source Traffic Co-Simulation Tool to Improve Road Safety
+SUMO2Unity: An Open-Source Traffic Co-Simulation Tool to Improve Road Safety 
 
 Ahmad Mohammadi, Peter Y Park, Mehdi Nourinejad, Muhammed Shijas Babu Cherakkatil, Hyun Sun Park
 
