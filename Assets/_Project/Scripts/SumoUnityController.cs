@@ -100,20 +100,11 @@ public class SumoUnityController : MonoBehaviour
         for (int carid = 1; carid < carlist.Count; carid++)
         {
             var carpos = client.Vehicle.GetPosition(carlist[carid].name).Content;
-            if (carpos != null)
-            {
-                carlist[carid].transform.position = new Vector3((float)carpos.X, 0f, (float)carpos.Y);
-                var newangle = client.Vehicle.GetAngle(carlist[carid].name).Content;
-                carlist[carid].transform.rotation = Quaternion.Euler(0f, (float)newangle, 0f);
-                double carSpeed = client.Vehicle.GetSpeed(carlist[carid].name).Content;
-                RotateCarWheels(FindChildRecursive(carlist[carid].transform, "Wheels"), (float)carSpeed);
-            }
-            else
-            {
-                RemoveLeftCar(carlist[carid]);
-
-            }
-
+            carlist[carid].transform.position = new Vector3((float)carpos.X, 0f, (float)carpos.Y);
+            var newangle = client.Vehicle.GetAngle(carlist[carid].name).Content;
+            carlist[carid].transform.rotation = Quaternion.Euler(0f, (float)newangle, 0f);
+            double carSpeed = client.Vehicle.GetSpeed(carlist[carid].name).Content;
+            RotateCarWheels(FindChildRecursive(carlist[carid].transform, "Wheels"), (float)carSpeed);
         }
 
         for (int i = 0; i < newvehicles.Count; i++)
