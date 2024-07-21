@@ -46,11 +46,9 @@ Check out the quick 2 minute demo
 - If you need more help or have any questions, feel free to create a new issue at the [Issues](https://github.com/SUMO2Unity/SUMO2Unity/issues) section. 
 
 ## Paper
-If you use SUMO2Unity, please cite our paper (Will be online shortly).
+If you use SUMO2Unity, please cite our paper.
 
-SUMO2Unity: An Open-Source Traffic Co-Simulation Tool to Improve Road Safety 
-
-Ahmad Mohammadi, Peter Y Park, Mehdi Nourinejad, Muhammed Shijas Babu Cherakkatil, Hyun Sun Park
+Mohammadi, A., Park, P. Y., Nourinejad, M., Cherakkatil, M. S. B., & Park, H. S. (2024, June). SUMO2Unity: An Open-Source Traffic Co-Simulation Tool to Improve Road Safety. In 2024 IEEE Intelligent Vehicles Symposium (IV) (pp. 2523-2528). IEEE.
 
 ## License
 - SUMO2Unity codes are distributed under MIT License.
