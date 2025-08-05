@@ -99,6 +99,6 @@ public class VehicleController : MonoBehaviour
         //Debug.Log($"currentLongSpeed+ {longVelocity}, verticalVelocity: {verticalVelocity}, lateralSpeed + {lateralSpeed}");
 
         // If you also want the vehicle to smoothly move to target position:
-        transform.localPosition = Vector3.Lerp(transform.localPosition, currentKnownPosition, 0.02f);
+        transform.localPosition = Vector3.Lerp(transform.localPosition, currentKnownPosition, 0.01f);
     }
 }
