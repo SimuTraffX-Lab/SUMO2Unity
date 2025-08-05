@@ -1,4 +1,4 @@
-## Welcome to Sumo2Unity Tool
+## Welcome to Sumo2Unity Traffic Co-Simulation Tool
 
 ## Introduction
 We observed traffic safety researchers invested considerable time, effort, and money in developing a co-simulation tool that integrated Traffic Simulation SUMO (Simulation of Urban MObility) and Unity Game Engine. Each study ‘re-invented the wheel’ and therefore sacrificed resources that could have been used to focus on the ultimate goal, i.e., improving safety. Sumo2Unity tool integrates Traffic Simulation SUMO (Simulation of Urban MObility) with Unity Game Engine. SUMO2Unity is an open-source project contains the following items: 
