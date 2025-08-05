@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!-- generated on 2025-07-25 09:30:40 by Eclipse SUMO netedit Version 1.23.1
+-->
+
+<routes xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="http://sumo.dlr.de/xsd/routes_file.xsd">
+    <!-- VTypes -->
+    <vType id="301" color="blue"/>
+    <vType id="302" color="grey"/>
+    <vType id="303" color="82,82,82"/>
+    <vType id="304" color="red"/>
+    <vType id="306" color="231,231,231"/>
+    <vType id="DEFAULT_VEHTYPE" maxSpeed="5.00"/>
+    <vType id="EgoCar" maxSpeed="5.00" color="69,56,56"/>
+    <!-- Vehicles, persons and containers (sorted by depart) -->
+    <flow id="f_1" type="301" begin="0.00" from="E0" to="E3" end="3600.00" vehsPerHour="500"/>
+    <flow id="f_2" type="302" begin="0.00" from="E2" to="-E0" end="3600.00" vehsPerHour="500"/>
+    <trip id="f_0.0" type="EgoCar" depart="540.00" from="E0" to="E1"/>
+</routes>

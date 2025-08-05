@@ -1,0 +1,1 @@
+﻿timestep_time;vehicle_id;vehicle_x;vehicle_y;vehicle_z

@@ -1,8 +1,0 @@
-﻿The following assets are developed by Unity and are free to use for commercial and non-commercial use. The assets are licensed by the standard Unity Asset Store EULA (https://unity.com/legal/as-terms).
-1. Automotive HMI Template
-2. TerrainDemoScene_URP
-3. TextMesh Pro
-4. UnityStandardAssets
-5. Viking Village
-
-
