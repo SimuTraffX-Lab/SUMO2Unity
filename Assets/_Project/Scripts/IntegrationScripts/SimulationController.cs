@@ -28,7 +28,10 @@ public class SimulationController : MonoBehaviour
     public Quaternion egoVehicleInitialRotation = Quaternion.Euler(0f, 90f, 0f);
 
     private StreamWriter writer;
-    public float unityStepLenght = 0.1f;
+
+    [Header("Unity Step Length (seconds)")]
+    public float unityStepLength = 0.10f;
+
     private float fixedTimeAccum = 0f; // Accumulator for FixedUpdate logging
 
     // New variables for timestamp offset
@@ -115,11 +118,11 @@ public class SimulationController : MonoBehaviour
 
     private void Start()
     {
-        vehiclePrefab = Resources.Load("EloraWhite") as GameObject;
+        vehiclePrefab = Resources.Load("EloraGold") as GameObject;
 
         if (vehiclePrefab == null)
         {
-            Debug.LogError("Vehicle prefab 'EloraWhite' not found in Resources.");
+            Debug.LogError("Vehicle prefab 'EloraGold' not found in Resources.");
             return;
         }
 
@@ -184,7 +187,7 @@ public class SimulationController : MonoBehaviour
         }
 
         fixedTimeAccum += Time.fixedDeltaTime;
-        if (fixedTimeAccum >= unityStepLenght - 0.002)
+        if (fixedTimeAccum >= unityStepLength - 0.002)
         {
             float currentTime = Time.fixedTime;
 

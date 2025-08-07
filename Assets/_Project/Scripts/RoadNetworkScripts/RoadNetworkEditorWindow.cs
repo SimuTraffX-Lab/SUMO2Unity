@@ -229,8 +229,8 @@ public class Sumo2UnityIntegrationWindow : EditorWindow
         EditorGUILayout.LabelField(
             "<b>Instructions:</b>\n\n" +
             "1. Go To Scenarios Folder\n" +
-            "2. Open <i>Sumo2Unity.py</i> with Visual Studio Code.\n" +
-            "3. Run.\n" +
+            "2. Run <i>Sumo2UnityTools.exe</i>.\n" +
+            "3. Select Parameters and Start Simulation.\n" +
             "4. Wait until <b>IntegrationStartTime</b> (e.g., 540 sec)\n" +
             "5. Click <b>Play</b> in Unity to start streaming vehicles / signals.\n" +
             "6. Press <b>Stop</b> to end the session.",

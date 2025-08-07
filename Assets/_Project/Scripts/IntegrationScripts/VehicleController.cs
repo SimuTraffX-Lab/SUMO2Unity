@@ -1,104 +1,116 @@
-using Unity.VisualScripting;
-using UnityEngine;
-using static SimulationController;
+﻿using UnityEngine;
 
 public class VehicleController : MonoBehaviour
 {
     private Rigidbody rb;
 
-    private Vector3 lastKnownPosition;
-    private Quaternion lastKnownRotation;
-    private Vector3 currentKnownPosition;
-    private Quaternion currentKnownRotation;
-    private float lastUpdateTime;
-    private float currentUpdateTime;
+    private Vector3 lastPos;
+    private Quaternion lastRot;
+    private Vector3 curPos;
+    private Quaternion curRot;
+    private float lastTime;
+    private float curTime;
 
-    private float currentLongSpeed = 0f; // Speed obtained from SimulationController
-    private float currentVerticalSpeed = 0f;
-    private float currentLateralSpeed = 0f;
+    private float curLong, curVert, curLat;
+    // set at runtime, after the Inspector value is known
+    private float stepLen;
+    private float turnThresholdDeg;
 
-    private float lastRecordedTime;
-    private float unityComputedSpeed;
+    private const float FadeTime = 0.05f;          // how long to ease out spin
+
+    private Vector3 residualAngularVel;           // ★ keeps turn’s leftover spin
+    private float residualTimer;                // ★ fade-out countdown
 
     private void Start()
     {
-        rb = GetComponent<Rigidbody>();
-        if (rb == null)
-        {
-            rb = gameObject.AddComponent<Rigidbody>();
-        }
+        rb = GetComponent<Rigidbody>() ?? gameObject.AddComponent<Rigidbody>();
 
         rb.isKinematic = false;
         rb.useGravity = false;
         rb.linearDamping = 1f;
+        rb.interpolation = RigidbodyInterpolation.Interpolate;
+        rb.collisionDetectionMode = CollisionDetectionMode.Continuous;
 
-        currentKnownPosition = transform.position;
-        lastKnownPosition = transform.position;
-        currentKnownRotation = transform.rotation;
-        lastKnownRotation = transform.rotation;
-
-        float startTime = Time.time;
-        lastUpdateTime = startTime;
-        currentUpdateTime = startTime;
+        curPos = lastPos = transform.position;
+        curRot = lastRot = transform.rotation;
+        lastTime = curTime = Time.time;
     }
 
-    public void UpdateTarget(Vector3 newTargetPosition, Quaternion newTargetRotation, float long_speed, float vertical_speed, float lateral_speed)
+    public void UpdateTarget(Vector3 pos, Quaternion rot,
+                             float longSpd, float vertSpd, float latSpd)
     {
-        float currentTime = Time.time;
+        lastPos = curPos; lastRot = curRot; lastTime = curTime;
+        curPos = pos; curRot = rot; curTime = Time.time;
 
-        // Move current data to last
-        lastKnownPosition = currentKnownPosition;
-        lastKnownRotation = currentKnownRotation;
-        lastUpdateTime = currentUpdateTime;
-
-        // Set the new data as current
-        currentKnownPosition = newTargetPosition;
-        currentKnownRotation = newTargetRotation;
-        currentUpdateTime = currentTime;
-
-        // Update current speed from SUMO data
-        currentLongSpeed = long_speed;
-        currentVerticalSpeed = vertical_speed;
-        currentLateralSpeed = lateral_speed;
-
-        //float deltaTime = Time.time - lastRecordedTime;
-        //if (name == "f_1.0")
-        //{
-        //    float distanceToNewTarget = Vector3.Distance(lastKnownPosition, currentKnownPosition);
-        //    unityComputedSpeed = distanceToNewTarget / deltaTime;
-
-
-        //    Debug.Log($"[VehicleController: {name}] UpdateTarget() at {currentTime:F3}s: " +
-        //              $"Speed: {unityComputedSpeed:F2} m/s, " +
-        //              $"Distance: {distanceToNewTarget:F3}, " +
-        //              $"Old Pos: {lastKnownPosition}, New Pos: {currentKnownPosition}");
-        //    // Update references
-        //    lastRecordedTime = Time.time;
-        //}
-
+        curLong = longSpd; curVert = vertSpd; curLat = latSpd;
     }
-
-    private void FixedUpdate()
+    void Awake()
     {
-        float interval = currentUpdateTime - lastUpdateTime;
-        if (interval <= 0f)
+        // Look for the first SimulationController in the scene
+        SimulationController sim = FindObjectOfType<SimulationController>();
+
+        if (sim == null)
         {
-            rb.linearVelocity = Vector3.zero;
-            rb.MoveRotation(currentKnownRotation);
+            Debug.LogError("SimulationController not found!");
             return;
         }
 
-        rb.MoveRotation(currentKnownRotation);
+        stepLen = sim.unityStepLength;                 // ← value set in Inspector
+        turnThresholdDeg = Mathf.Clamp(stepLen * 40f, 0.25f, 10f);
+    }
+    private void FixedUpdate()
+    {
+        float dt = curTime - lastTime;
+        if (dt <= 0f)
+        {
+            rb.linearVelocity = Vector3.zero;
+            rb.angularVelocity = Vector3.zero;
+            rb.MoveRotation(curRot);
+            return;
+        }
 
-        // Your forward direction might differ; assuming x-axis is forward and y is up:
-        Vector3 longVelocity = transform.TransformDirection(Vector3.right * currentLongSpeed);
-        Vector3 verticalVelocity = transform.TransformDirection(Vector3.up * currentVerticalSpeed);
-        Vector3 lateralSpeed = transform.TransformDirection(Vector3.forward * currentLateralSpeed);
+        float headingDelta = Quaternion.Angle(lastRot, curRot);   // degrees
 
-        rb.linearVelocity = longVelocity + verticalVelocity + lateralSpeed;
-        //Debug.Log($"currentLongSpeed+ {longVelocity}, verticalVelocity: {verticalVelocity}, lateralSpeed + {lateralSpeed}");
+        if (headingDelta < turnThresholdDeg)                      // ─ straight
+        {
+            /* linear vel from local-axis speeds (ultra smooth) */
+            Vector3 vLong = curRot * (Vector3.right * curLong);
+            Vector3 vLat = curRot * (Vector3.forward * curLat);
+            Vector3 vUp = Vector3.up * curVert;
+            rb.linearVelocity = vLong + vLat + vUp;
 
-        // If you also want the vehicle to smoothly move to target position:
-        transform.localPosition = Vector3.Lerp(transform.localPosition, currentKnownPosition, 0.01f);
+            /* ① damp residual spin, don’t kill instantly */
+            if (residualTimer > 0f)
+            {
+                residualTimer -= Time.fixedDeltaTime;
+                float k = Mathf.Clamp01(residualTimer / FadeTime);
+                rb.angularVelocity = residualAngularVel * k;
+                if (k <= 0f) rb.MoveRotation(curRot);            // fully aligned
+            }
+            else
+            {
+                rb.angularVelocity = Vector3.zero;
+                rb.MoveRotation(curRot);
+            }
+        }
+        else                                                      // ─ turning
+        {
+            rb.linearVelocity = (curPos - lastPos) / dt;
+            residualAngularVel = CalcAngularVel(lastRot, curRot, dt); // ★ store
+            rb.angularVelocity = residualAngularVel;
+            residualTimer = FadeTime;                          // ★ reset
+        }
+
+        /* original ultra-smooth positional blend */
+        transform.localPosition =
+            Vector3.Lerp(transform.localPosition, curPos, 0.02f);
+    }
+
+    private static Vector3 CalcAngularVel(Quaternion from, Quaternion to, float dt)
+    {
+        Quaternion dq = to * Quaternion.Inverse(from);
+        dq.ToAngleAxis(out float angDeg, out Vector3 axis);
+        if (angDeg > 180f) angDeg -= 360f;
+        return axis.normalized * Mathf.Deg2Rad * angDeg / Mathf.Max(dt, 0.0001f);
     }
 }

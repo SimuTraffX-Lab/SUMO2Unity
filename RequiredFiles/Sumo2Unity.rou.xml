@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!-- generated on 2025-08-06 11:54:38 by Eclipse SUMO netedit Version 1.22.0
+-->
+
+<routes xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="http://sumo.dlr.de/xsd/routes_file.xsd">
+    <!-- VTypes -->
+    <vType id="301" length="4.68" width="2.32" height="1.47" color="0,0,128"/>
+    <vType id="302" length="4.68" width="2.32" height="1.47" color="132,132,132"/>
+    <vType id="303" length="4.06" width="1.84" color="66,66,66"/>
+    <vType id="304" length="4.07" width="1.84" color="228,58,58"/>
+    <vType id="305" length="4.81" guiShape="passenger" width="2.16" color="245,215,50"/>
+    <vType id="306" length="4.81" width="2.16" color="229,229,229"/>
+    <vType id="EgoBike" length="1.80" vClass="bicycle" color="16,186,16"/>
+    <vType id="EgoCar" length="4.81" width="2.16" color="69,56,56"/>
+    <vType id="EgoScooter" length="1.09" vClass="scooter"/>
+</routes>

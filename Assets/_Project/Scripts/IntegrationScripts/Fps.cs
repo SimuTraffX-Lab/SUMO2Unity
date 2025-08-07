@@ -68,8 +68,17 @@ public class Fps : MonoBehaviour
         // --------------------------------------------------------  other setup
         _ExchangeData = GetComponent<ExchangeData>() ?? gameObject.AddComponent<ExchangeData>();
 
-        simController = FindObjectOfType<SimulationController>();
-        logInterval = simController ? simController.unityStepLenght : 0.1f;
+
+        // --- get the SimulationController in the scene ----------------
+        SimulationController sim = FindObjectOfType<SimulationController>();
+        if (sim == null)
+        {
+            Debug.LogError("SimulationController not found!");
+            return;
+        }
+
+        logInterval = sim.unityStepLength;   // value you set in Inspector
+
 
         displayedFps = 0f;           // avoid showing 0 initially
         GUI.depth = 2;
