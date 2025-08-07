@@ -21,6 +21,7 @@ DEFAULTS = {
     "steplength"          : 0.1,
     "lateral_resolution"  : 0.3,
     "zoom"                : 150.0,   # (bigger value → closer)
+    "subscribe_radius"    : 250.0    # ★ NEW (TraCI context radius)
 }
 VERSION      = "Sumo2Unity v2.0.0"
 LINKEDIN_URL = "https://www.linkedin.com/in/ahmadmohammadi1441/"
@@ -52,7 +53,9 @@ root.after(2000, swap)
 root.columnconfigure(1, weight=1)
 entries, row = {}, 1
 for k, v in DEFAULTS.items():
-    label_text = "zoom (bigger value → closer)" if k == "zoom" else k
+    label_text = ("zoom (bigger value → closer)" if k == "zoom"
+                  else "subscribe radius (m)"    if k == "subscribe_radius"
+                  else k)
     ttk.Label(root, text=label_text).grid(row=row, column=0,
                                           sticky="e", padx=6, pady=3)
     e = ttk.Entry(root); e.insert(0, str(v))
@@ -122,10 +125,11 @@ def run_sim(cfg: dict):
     ExperimentEndTime    = cfg["ExperimentEndTime"]
     steplength           = cfg["steplength"]
     lateral_resolution   = cfg["lateral_resolution"]
-    zoom_level           = cfg["zoom"]          # ← new
+    zoom_level           = cfg["zoom"]
+    subscribe_radius     = cfg["subscribe_radius"]   # ★ NEW
     use_gui              = cfg["use_gui"]
     calc_rtf             = cfg["calc_rtf"]
-    free_cam             = cfg["free_cam"]      # ★ NEW
+    free_cam             = cfg["free_cam"]           # ★ NEW
 
     # ---------- logging ----------
     logging.basicConfig(level=logging.INFO,
@@ -159,7 +163,7 @@ def run_sim(cfg: dict):
 
     # ★ updated helper respects free_cam flag
     def cam_follow(view_id, veh_id):
-        if free_cam:  # nothing if free camera
+        if free_cam:
             return
         try:
             traci.gui.trackVehicle(view_id, veh_id)
@@ -172,7 +176,7 @@ def run_sim(cfg: dict):
     traci.vehicle.subscribeContext(
         ego,
         traci.constants.CMD_GET_VEHICLE_VARIABLE,
-        250,
+        subscribe_radius,                    # ★ NEW (was 250)
         [VAR_POSITION3D, VAR_ANGLE, VAR_TYPE]
     )
     # ---------- ZMQ sockets ----------
