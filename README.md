@@ -22,13 +22,13 @@ Check out the quick 2 minute demo
 - Once you install Unity Hub, download and install Unity Editor. We recommend version 6000.0.53f1.
 
 ## Getting Started
--SUMO - Step by Step Tutorial [Youtube Tutorial](https://www.youtube.com/playlist?list=PLAk8GOoajG6tKI74YID0hwjXVg8KBxNAD)
+-SUMO - Step by Step Tutorial [Youtube Tutorial](https://youtu.be/IwsrNWlX9Ag?si=ui75deOeqbreQTf7)
 1. Install SUMO (Version 1.22)
 2. Set Up SUMO Environment Variables
 3. Install Notepad ++
 4. Watch SUMO Tutorial
    
--Unity - Step by Step Tutorial [Youtube Tutorial](https://www.youtube.com/playlist?list=PLAk8GOoajG6veF2wQ_CJJpQXNDufEQuoA)
+-Unity - Step by Step Tutorial [Youtube Tutorial](https://youtu.be/ngccSGH3-_8?si=X1Lx07NUWUqOvJ2f)
 1. Install Unity HUB
 2. Install Unity Editor. We recommend version 6000.0.53f1.
 3. Install Visual Studio
