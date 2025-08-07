@@ -1,4 +1,4 @@
-﻿// ============================== 
+﻿// ==============================
 // RoadNetworkBuilder.cs
 // (Decals clipped by sampling spans outside junction polygons)
 // ==============================
@@ -22,7 +22,7 @@ public class RoadNetworkBuilder : MonoBehaviour
         if (Singleton != this)
         {
             Singleton = this;
-            Debug.Log("RoadNetworkBuilder: Editor‑based initialization complete.");
+            Debug.Log("RoadNetworkBuilder: Editor-based initialization complete.");
         }
     }
     private void OnDestroy()
@@ -43,6 +43,11 @@ public class RoadNetworkBuilder : MonoBehaviour
     private Material polygonFallbackMaterial;
 
     private GameObject roadNetworkRoot;
+
+    // ★ NEW: Ground-layer support --------------------------------------------
+    private const string groundLayerName = "Ground";
+    private int groundLayer = -1;
+    // ------------------------------------------------------------------------
 
     public Dictionary<string, RoadJunctionData> junctionRecords;
     public Dictionary<string, RoadLaneData> laneRecords;
@@ -78,7 +83,14 @@ public class RoadNetworkBuilder : MonoBehaviour
         _junctionPolys2D.Clear();
 
         sumoXmlFolderPath = sumoFilesFolder;
+
+        // ★ NEW: cache “Ground” layer index once
+        if (groundLayer < 0) groundLayer = LayerMask.NameToLayer(groundLayerName);
+        if (groundLayer < 0)
+            Debug.LogWarning($"Layer \"{groundLayerName}\" does not exist – objects will keep their current layer.");
+
         roadNetworkRoot = new GameObject("RoadNetworkRoot");
+        if (groundLayer >= 0) roadNetworkRoot.layer = groundLayer;        // ★ NEW
 
         var netFilePath = Path.Combine(sumoXmlFolderPath, "Sumo2Unity.net.xml");
         var polyFilePath = Path.Combine(sumoXmlFolderPath, "Sumo2Unity.poly.xml");
@@ -206,6 +218,9 @@ public class RoadNetworkBuilder : MonoBehaviour
         {
             Debug.LogError($"Failed to deserialize polygon file: {e}");
         }
+
+        // ★ NEW: ensure polygons just created inherit the Ground layer
+        SetLayerRecursively(roadNetworkRoot, groundLayer);
     }
 
     public void GenerateRoadsAndJunctions()
@@ -227,6 +242,7 @@ public class RoadNetworkBuilder : MonoBehaviour
 
                 var laneObj = new GameObject($"LaneSegment_{laneCounter++}");
                 laneObj.transform.SetParent(roadNetworkRoot.transform);
+                if (groundLayer >= 0) laneObj.layer = groundLayer;  // ★ NEW
                 var mf = laneObj.AddComponent<MeshFilter>();
                 var mr = laneObj.AddComponent<MeshRenderer>();
                 mf.sharedMesh = laneMesh;
@@ -284,12 +300,26 @@ public class RoadNetworkBuilder : MonoBehaviour
 
             GameObject jObj = new GameObject($"Junction_{junctionCounter++}");
             jObj.transform.SetParent(roadNetworkRoot.transform);
+            if (groundLayer >= 0) jObj.layer = groundLayer;           // ★ NEW
             var jMf = jObj.AddComponent<MeshFilter>();
             var jMr = jObj.AddComponent<MeshRenderer>();
             jMf.mesh = junctionMesh;
             jMr.material = junctionSurfaceMaterial ?? GetFallbackMaterial();
         }
+
+        // ★ NEW: make sure every child built above is on the Ground layer
+        SetLayerRecursively(roadNetworkRoot, groundLayer);
     }
+
+    // -------------------- helper --------------------------------------------
+    private static void SetLayerRecursively(GameObject obj, int layer)
+    {
+        if (layer < 0) return;
+        obj.layer = layer;
+        foreach (Transform child in obj.transform)
+            SetLayerRecursively(child.gameObject, layer);
+    }
+    // ------------------------------------------------------------------------
 
     private Vector3 ToUnity(double x, double y) => new((float)(x - originX), 0f, (float)(y - originY));
 
@@ -334,6 +364,7 @@ public class RoadNetworkBuilder : MonoBehaviour
 
         GameObject polyGO = new GameObject($"Shape_{polygonId}");
         polyGO.transform.SetParent(roadNetworkRoot.transform);
+        if (groundLayer >= 0) polyGO.layer = groundLayer;             // ★ NEW
 
         if (!string.IsNullOrEmpty(polygonType) && polygonType.ToLowerInvariant().Contains("terrain"))
             polyGO.transform.localPosition = new Vector3(0f, -0.02f, 0f);
@@ -483,7 +514,7 @@ public class RoadNetworkBuilder : MonoBehaviour
         if (boundaryPts == null || boundaryPts.Length < 2) return;
 
         const float stepSize = 3f;        // spacing between decals (m)
-        const float sampleStep = 0.25f;   // resolution for span detection (m)
+        const float sampleStep = 0.25f;     // resolution for span detection (m)
         Vector3 baseSize = new Vector3(0.1f, 0.2f, 3f);
 
         int count = boundaryPts.Length;
@@ -537,6 +568,7 @@ public class RoadNetworkBuilder : MonoBehaviour
 
                 GameObject decalObj = new GameObject($"{name}_Decal");
                 decalObj.transform.SetParent(parent != null ? parent : roadNetworkRoot.transform);
+                if (groundLayer >= 0) decalObj.layer = groundLayer;     // ★ NEW
                 decalObj.transform.position = center;
                 decalObj.transform.rotation = Quaternion.LookRotation(-dir, Vector3.up);
 

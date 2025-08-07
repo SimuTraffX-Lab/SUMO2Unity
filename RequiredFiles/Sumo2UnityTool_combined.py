@@ -60,13 +60,17 @@ for k, v in DEFAULTS.items():
     entries[k] = e; row += 1
 
 # ── NEW OPTIONS ────────────────────────────────────────────────
-use_gui_var  = tk.BooleanVar(value=True)
-rtf_var      = tk.BooleanVar(value=True)
+use_gui_var   = tk.BooleanVar(value=True)
+rtf_var       = tk.BooleanVar(value=True)
+free_cam_var  = tk.BooleanVar(value=False)        # ★ NEW (Free-cam)
 
 ttk.Checkbutton(root, text="Run SUMO with GUI",  variable=use_gui_var)\
    .grid(row=row, column=0, columnspan=2, sticky="w", padx=6, pady=3); row += 1
 ttk.Checkbutton(root, text="Calculate RTF",      variable=rtf_var)\
    .grid(row=row, column=0, columnspan=2, sticky="w", padx=6, pady=3); row += 1
+ttk.Checkbutton(root, text="Free camera (no follow ego vehicle)",
+                variable=free_cam_var) \
+   .grid(row=row, column=0, columnspan=2, sticky="w", padx=6, pady=3); row += 1  # ★ NEW
 # ────────────────────────────────────────────────────────────────
 
 def center(win):
@@ -100,6 +104,10 @@ def show_pubs():
    Development of a Virtual Reality Traffic Simulation to Analyze Road User Behavior.
    In 2025 7th International Congress on Human-Computer Interaction, Optimization
    and Robotic Applications (ICHORA) (pp. 1-5). IEEE.
+   
+3. Mohammadi, A., Cherakkatil, M. S. B., Park, P. Y., Nourinejad, M., & Asgary, A. (2025). 
+   A novel virtual reality traffic simulation for enhanced traffic safety assessment [Preprint].
+   Preprints. https://doi.org/10.20944/preprints202508.0112.v1
 """
     txt.insert("1.0", pubs); txt.config(state="disabled")
     txt.pack(expand=True, fill="both", padx=8, pady=8); center(pop)
@@ -117,6 +125,7 @@ def run_sim(cfg: dict):
     zoom_level           = cfg["zoom"]          # ← new
     use_gui              = cfg["use_gui"]
     calc_rtf             = cfg["calc_rtf"]
+    free_cam             = cfg["free_cam"]      # ★ NEW
 
     # ---------- logging ----------
     logging.basicConfig(level=logging.INFO,
@@ -143,13 +152,15 @@ def run_sim(cfg: dict):
     # ---------- gui camera helper ----------
     ego = "f_0.0"
 
-    if use_gui:
+    if use_gui and not free_cam:                             # ★ NEW
         view_id = "View #0"
         traci.gui.trackVehicle(view_id, ego)
         traci.gui.setSchema(view_id, "real world")
 
-    # ★ updated helper uses GUI-selected zoom
+    # ★ updated helper respects free_cam flag
     def cam_follow(view_id, veh_id):
+        if free_cam:  # nothing if free camera
+            return
         try:
             traci.gui.trackVehicle(view_id, veh_id)
             traci.gui.setZoom(view_id, zoom_level)
@@ -333,8 +344,9 @@ def start_clicked():
     try:
         cfg = {k: (int(v.get()) if "Time" in k else float(v.get()))
                for k,v in entries.items()}
-        cfg["use_gui"] = bool(use_gui_var.get())
+        cfg["use_gui"]  = bool(use_gui_var.get())
         cfg["calc_rtf"] = bool(rtf_var.get())
+        cfg["free_cam"] = bool(free_cam_var.get())          # ★ NEW
     except ValueError:
         messagebox.showerror("Invalid input","Please enter numeric values.")
         return
