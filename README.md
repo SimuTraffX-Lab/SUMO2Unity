@@ -16,11 +16,6 @@ Check out the quick 2 minute demo
 
 [![IMAGE ALT TEXT HERE](https://img.youtube.com/vi/9nSCKIz6lQI/0.jpg)](https://www.youtube.com/watch?v=9nSCKIz6lQI)
 
-## Pre-Requisites
-- Download latest version of [Sumo](https://eclipse.dev/sumo/). We recommend version 1.22.
-- Download [Unity Hub](https://unity.com/download).
-- Once you install Unity Hub, download and install Unity Editor. We recommend version 6000.0.53f1.
-
 ## Getting Started
 -SUMO - Step by Step Tutorial [Youtube Tutorial](https://youtu.be/IwsrNWlX9Ag?si=ui75deOeqbreQTf7)
 1. Install SUMO (Version 1.22)
@@ -35,11 +30,11 @@ Check out the quick 2 minute demo
 4. Install Visual Studio Dependencies
 5. Watch Unity VR Tutorial  
    
--SUMO2Unity - Step by Step Tutorial [Youtube Tutorial](https://www.youtube.com/playlist?list=PLAk8GOoajG6uIKpzW0R9aQ9mWXRY77azk)
+-Sumo2Unity - Step by Step Tutorial [Youtube Tutorial](https://www.youtube.com/playlist?list=PLAk8GOoajG6u6Y_3gAbuTLc1EwVwzg0md)
 1. Download this repository as a zip file.
 2. Extract the zip file.
 3. Add the extract file in Unity Hub and open it with version 6000.0.53f1.
-4. Watch SUMO2Unity Tutorial
+4. Watch Sumo2Unity Tutorial
 
 ## Usage
 - Sumo2Unity has ability to create a very complex road network
