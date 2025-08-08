@@ -6,15 +6,18 @@ We observed traffic safety researchers invested considerable time, effort, and m
 2.	Integrate SUMO and Unity. This included programming the data exchange between the trajectory coordinates (X, Y, Z) of the vehicles and the signal timing (phase and duration) every 0.10 seconds; and 
 3.	Develop performance functions to evaluate the performance of the integration.
    
+Sumo2Unity tool contains simulator car, simulator bicycle, scooter, and traffic light. 
+   
 <p align="center">
   <img src="https://github.com/user-attachments/assets/125b4c66-a82d-43b2-b190-e6c3a005c9a2" alt="7">
 </p>
 
-Sumo2Unity tool contains simulator car, simulator bicycle, scooter, and traffic light. 
-
-Check out the quick 2 minute demo
-
-[![IMAGE ALT TEXT HERE](https://img.youtube.com/vi/9nSCKIz6lQI/0.jpg)](https://www.youtube.com/watch?v=9nSCKIz6lQI)
+<p align="center"><em>Check out the quick 2 minute demo</em></p>
+<p align="center">
+  <a href="https://www.youtube.com/watch?v=9nSCKIz6lQI" target="_blank">
+    <img src="https://img.youtube.com/vi/9nSCKIz6lQI/0.jpg" alt="2-minute demo" width="720">
+  </a>
+</p>
 
 ## Getting Started
 -SUMO - Step by Step Tutorial [Youtube Tutorial](https://youtu.be/IwsrNWlX9Ag?si=ui75deOeqbreQTf7)
