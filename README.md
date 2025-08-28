@@ -6,10 +6,35 @@ We observed traffic safety researchers invested considerable time, effort, and m
 2.	Integrate SUMO and Unity. This included programming the data exchange between the trajectory coordinates (X, Y, Z) of the vehicles and the signal timing (phase and duration) every 0.10 seconds; and 
 3.	Develop performance functions to evaluate the performance of the integration.
    
-Sumo2Unity tool contains simulator car, simulator bicycle, scooter, and traffic light. 
+Sumo2Unity tool usecases: 
+1. 3D Enhanced Visualization of 2D SUMO Simulation including roads, trees, building, traffic light 
+2. VR/Simulator Human in the Loop Simulation Experiments including simulator car, simulator bicycle and scooter. 
+
+
+It only requires three steps:
    
 <p align="center">
-  <img src="https://github.com/user-attachments/assets/125b4c66-a82d-43b2-b190-e6c3a005c9a2" alt="7">
+  <img src="https://github.com/user-attachments/assets/125b4c66-a82d-43b2-b190-e6c3a005c9a2" alt="7" width="1024">
+</p>
+
+## A User Firendly tool
+
+You can run it without requiring any specific package. You only need SUMO and Unity which both are free tools.
+
+
+## Driver Prespective
+<p align="center">
+  <img src="https://github.com/user-attachments/assets/bb036fc4-cac5-4f32-a620-40342399f67c" alt="7" width="1024">
+</p>
+
+## Bicycle Prespective
+<p align="center">
+  <img src="https://github.com/user-attachments/assets/71dc4f72-1dec-49a5-b586-98740681c013" alt="7" width="1024">
+</p>
+
+## 3D Visualization Prespective
+<p align="center">
+  <img src="https://github.com/user-attachments/assets/003187d0-1368-4bc6-a127-7446b08ea537" alt="7" width="1024" alt="7" width="1024">
 </p>
 
 <p align="center"><em>Check out the quick 2 minute demo</em></p>
