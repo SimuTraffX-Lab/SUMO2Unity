@@ -14,7 +14,7 @@ Sumo2Unity tool usecases:
 It only requires three steps:
    
 <p align="center">
-  <img src="https://github.com/user-attachments/assets/b60f107a-2309-4260-b749-7d0a8c712c16" alt="7" width="1024">
+  <img src="https://github.com/user-attachments/assets/b60f107a-2309-4260-b749-7d0a8c712c16" alt="7" width="720">
 </p>
 
 ## A User Firendly tool
@@ -24,23 +24,23 @@ You can run it without requiring any specific package. You only need SUMO and Un
 
 ## Driver Prespective
 <p align="center">
-  <img src="https://github.com/user-attachments/assets/724c1664-4530-49bf-a49d-3580ff2ed5c8" alt="7" width="1024">
+  <img src="https://github.com/user-attachments/assets/724c1664-4530-49bf-a49d-3580ff2ed5c8" alt="7" width="720">
 </p>
 
 ## Bicycle Prespective
 <p align="center">
-  <img src="https://github.com/user-attachments/assets/98a09816-e5c7-4c4d-ac94-7b0e81612ed2" alt="7" width="1024">
+  <img src="https://github.com/user-attachments/assets/98a09816-e5c7-4c4d-ac94-7b0e81612ed2" alt="7" width="720">
 </p>
 
 ## 3D Visualization Prespective
 <p align="center">
-  <img src="https://github.com/user-attachments/assets/003187d0-1368-4bc6-a127-7446b08ea537" alt="7" width="1024" alt="7" width="1024">
+  <img src="https://github.com/user-attachments/assets/003187d0-1368-4bc6-a127-7446b08ea537" alt="7" width="720">
 </p>
 
-<p align="center"><em>Check out the quick 2 minute demo</em></p>
+<p align="center"><em>Check out the quick 2 minute demo - Click to Play</em></p>
 <p align="center">
   <a href="https://www.youtube.com/watch?v=9nSCKIz6lQI" target="_blank">
-    <img src="https://github.com/user-attachments/assets/948ad90e-f9fc-4a43-9b02-f66749d05f34" alt="2-minute demo" width="720">
+    <img src="https://github.com/user-attachments/assets/d3949c35-d93d-414f-89e9-84e3ad3d9786" alt="2-minute demo" width="720">
   </a>
 </p>
 
