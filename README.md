@@ -77,7 +77,7 @@ If you use SUMO2Unity, please cite our papers.
 
 Mohammadi, A., Park, P. Y., Nourinejad, M., Cherakkatil, M. S. B., & Park, H. S. (2024, June). SUMO2Unity: An Open-Source Traffic Co-Simulation Tool to Improve Road Safety. In 2024 IEEE Intelligent Vehicles Symposium (IV) (pp. 2523-2528). IEEE.
 
-Mohammadi, A., Park, P. Y., Nourinejad, M., & Cherakkatil, M. S. B. (2025, May). Development of a Virtual Reality Traffic Simulation to Analyze Road User Behavior. In 2025 7th International Congress on Human-Computer Interaction, Optimization and Robotic Applications (ICHORA) (pp. 1-5). IEEE.
+Mohammadi, A., Cherakkatil, M. S. B., Park, P. Y., Nourinejad, M., & Asgary, A. (2025). An Open-Source Virtual Reality Traffic Co-Simulation for Enhanced Traffic Safety Assessment. Applied Sciences, 15(17), 9351.
 
 
 ## License
