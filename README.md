@@ -58,7 +58,7 @@ You can run it without requiring any specific package. You only need SUMO and Un
 4. Install Visual Studio Dependencies
 5. Watch Unity VR Tutorial  
    
--Sumo2Unity - Step by Step Tutorial [Youtube Tutorial](https://www.youtube.com/playlist?list=PLAk8GOoajG6u6Y_3gAbuTLc1EwVwzg0md)
+-Sumo2Unity - Step by Step Tutorial [Youtube Tutorial](https://youtu.be/Cv1wBGuaT0E)
 1. Download this repository as a zip file.
 2. Extract the zip file.
 3. Add the extract file in Unity Hub and open it with version 6000.0.53f1.
