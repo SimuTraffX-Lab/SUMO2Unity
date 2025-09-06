@@ -1,5 +1,12 @@
 ## Welcome to Sumo2Unity Traffic Co-Simulation Tool
 
+![Contributors](https://img.shields.io/github/contributors/SimuTraffX-Lab/SUMO2Unity)
+![Forks](https://img.shields.io/github/forks/SimuTraffX-Lab/SUMO2Unity?style=flat-square)
+![Stars](https://img.shields.io/github/stars/SimuTraffX-Lab/SUMO2Unity?style=flat-square)
+![Issues](https://img.shields.io/github/issues/SimuTraffX-Lab/SUMO2Unity)
+![License: MIT](https://img.shields.io/badge/License-MIT-green.svg)
+[![LinkedIn](https://img.shields.io/badge/LinkedIn-Connect-blue)](https://www.linkedin.com/in/ahmadmohammadi1441/)
+
 ## Introduction
 We observed traffic safety researchers invested considerable time, effort, and money in developing a co-simulation tool that integrated Traffic Simulation SUMO (Simulation of Urban MObility) and Unity Game Engine. Each study ‘re-invented the wheel’ and therefore sacrificed resources that could have been used to focus on the ultimate goal, i.e., improving safety. Sumo2Unity tool integrates Traffic Simulation SUMO (Simulation of Urban MObility) with Unity Game Engine. SUMO2Unity is an open-source project contains the following items: 
 1.	It automatically import complex road network from SUMO to Unity;
