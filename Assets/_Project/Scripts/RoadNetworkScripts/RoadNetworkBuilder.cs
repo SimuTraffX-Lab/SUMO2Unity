@@ -70,11 +70,11 @@ public class RoadNetworkBuilder : MonoBehaviour
 
     public void LoadSumoXmlFiles(string sumoFilesFolder)
     {
-        if (roadNetworkRoot != null)
-        {
-            DestroyImmediate(roadNetworkRoot);
-            roadNetworkRoot = null;
-        }
+        //if (roadNetworkRoot != null)
+        //{
+        //    DestroyImmediate(roadNetworkRoot);
+        //    roadNetworkRoot = null;
+        //}
         laneWidthMap.Clear();
         junctionRecords?.Clear();
         laneRecords?.Clear();

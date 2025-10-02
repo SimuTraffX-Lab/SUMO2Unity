@@ -20,6 +20,8 @@ public class UIManager : MonoBehaviour
     [Header("Core References")]
     public RoadNetworkBuilder roadNetworkBuilder; // Drag your RoadNetworkBuilder instance here
 
+    private GameObject roadNetworkRoot;
+
     // Stores the path selected by the user
     private string sumoFolderPath;
 
@@ -113,23 +115,16 @@ public class UIManager : MonoBehaviour
     // This method will be linked to the "Start Co-Simulation" button
     public void OnStartSimulationButton_Click()
     {
-        string sumoToolPath = System.IO.Path.Combine(sumoFolderPath, "Sumo2UnityTools.exe");
-
-        if (!System.IO.File.Exists(sumoToolPath))
-        {
-            statusText.text = $"Error: Sumo2UnityTools.exe not found in the selected folder!";
-            return;
-        }
-
         try
         {
-            Process.Start(sumoToolPath);
+            roadNetworkRoot = GameObject.Find("RoadNetworkRoot");
+            DontDestroyOnLoad(roadNetworkRoot);
 
             // This is crucial: it prevents the generated road network from being destroyed when we load the next scene
             DontDestroyOnLoad(roadNetworkBuilder.gameObject.transform.root.gameObject);
 
             // Load the simulation scene
-            SceneManager.LoadScene("SimulationScene");
+            SceneManager.LoadScene("Scenario1");
         }
         catch (System.Exception ex)
         {

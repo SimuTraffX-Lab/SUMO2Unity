@@ -553,7 +553,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   egoVehicle: {fileID: 2471852994914885337, guid: 3964cd274d2587648aa2f630736264d0, type: 3}
-  egoVehicleInitialPosition: {x: -38, y: 0, z: -6}
+  egoVehicleInitialPosition: {x: -25.3, y: 0, z: 69.7}
   egoVehicleInitialRotation: {x: 0, y: 0.70710677, z: 0, w: 0.70710677}
   unityStepLength: 0.1
   junctions: {fileID: 1196798617}
