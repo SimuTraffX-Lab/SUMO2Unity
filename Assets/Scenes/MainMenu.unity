@@ -208,8 +208,8 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 36799392}
   serializedVersion: 2
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 1, z: -10}
+  m_LocalRotation: {x: 0.15452102, y: 0.7035442, z: -0.16113319, w: 0.674674}
+  m_LocalPosition: {x: -50.614277, y: 29.560213, z: 62.24904}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -2674,6 +2674,7 @@ GameObject:
   - component: {fileID: 1367318287}
   - component: {fileID: 1367318286}
   - component: {fileID: 1367318288}
+  - component: {fileID: 1367318289}
   m_Layer: 5
   m_Name: Panel
   m_TagString: Untagged
@@ -2755,6 +2756,20 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 7bcc77f1a13634c428a02c225cd80b47, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+--- !u!114 &1367318289
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1367318284}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5cbf441e221324241879a288a99b65ea, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  leftToggle: {fileID: 955540817}
+  rightToggle: {fileID: 1036730016}
 --- !u!1 &1387487136
 GameObject:
   m_ObjectHideFlags: 0

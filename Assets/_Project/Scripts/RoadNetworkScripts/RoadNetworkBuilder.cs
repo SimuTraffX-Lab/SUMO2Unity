@@ -12,6 +12,7 @@ using UnityEditor;
 using UnityEngine;
 using UnityEngine.Rendering.Universal;
 using NetFile;
+using System.Linq;
 
 public class RoadNetworkBuilder : MonoBehaviour
 {
@@ -267,6 +268,21 @@ public class RoadNetworkBuilder : MonoBehaviour
         {
             if (j.shapePoints.Count < 3) continue;
 
+            //var verts2D = new Vector2[j.shapePoints.Count];
+            //for (int i = 0; i < j.shapePoints.Count; i++)
+            //{
+            //    double[] xy = j.shapePoints[i];
+            //    verts2D[i] = new Vector2((float)(xy[0] - originX), (float)(xy[1] - originY));
+            //}
+
+            //// cache for clipping
+            //_junctionPolys2D.Add((Vector2[])verts2D.Clone());
+
+            //MeshTriangulator triangulator = new MeshTriangulator(verts2D);
+            //int[] triIndices = triangulator.GenerateIndices();
+
+            // --- REPLACEMENT CODE ---
+
             var verts2D = new Vector2[j.shapePoints.Count];
             for (int i = 0; i < j.shapePoints.Count; i++)
             {
@@ -274,15 +290,66 @@ public class RoadNetworkBuilder : MonoBehaviour
                 verts2D[i] = new Vector2((float)(xy[0] - originX), (float)(xy[1] - originY));
             }
 
-            // cache for clipping
-            _junctionPolys2D.Add((Vector2[])verts2D.Clone());
+            // === NEW: DATA CLEANING AND VALIDATION STEP ===
+            // 1. Use LINQ to get a list of only the unique vertices.
+            var distinctVerts = System.Linq.Enumerable.Distinct(verts2D).ToArray();
 
-            MeshTriangulator triangulator = new MeshTriangulator(verts2D);
+            // 2. A valid polygon needs at least 3 unique vertices to form a triangle.
+            if (distinctVerts.Length < 3)
+            {
+                // Log a warning and skip to the next junction in the loop.
+                Debug.LogWarning($"Skipping Junction '{j.junctionId}' because it has fewer than 3 unique vertices.");
+                continue; // This jumps to the next 'foreach (RoadJunctionData j...'
+            }
+            // =================================================
+
+            // cache for clipping - use the cleaned data
+            _junctionPolys2D.Add((Vector2[])distinctVerts.Clone());
+
+            // Now, triangulate using the cleaned, validated vertex list.
+            MeshTriangulator triangulator = new MeshTriangulator(distinctVerts);
             int[] triIndices = triangulator.GenerateIndices();
 
-            var verts3D = new Vector3[verts2D.Length];
-            for (int i = 0; i < verts2D.Length; i++)
-                verts3D[i] = new Vector3(verts2D[i].x, 0f, verts2D[i].y);
+            // We need to update the 3D vertices as well
+            var verts3D = new Vector3[distinctVerts.Length];
+            for (int i = 0; i < distinctVerts.Length; i++)
+                verts3D[i] = new Vector3(distinctVerts[i].x, 0f, distinctVerts[i].y);
+
+            
+
+            //var verts3D = new Vector3[verts2D.Length];
+            //for (int i = 0; i < verts2D.Length; i++)
+            //    verts3D[i] = new Vector3(verts2D[i].x, 0f, verts2D[i].y);
+
+            //Mesh junctionMesh = new Mesh
+            //{
+            //    name = $"Junction_{j.junctionId}",
+            //    vertices = verts3D,
+            //    triangles = triIndices
+            //};
+            //junctionMesh.RecalculateNormals();
+            //junctionMesh.RecalculateBounds();
+
+            //Bounds b = junctionMesh.bounds;
+            //var uvArr = new Vector2[verts3D.Length];
+            //for (int i = 0; i < verts3D.Length; i++)
+            //    uvArr[i] = new Vector2(
+            //        (verts3D[i].x - b.min.x) / b.size.x,
+            //        (verts3D[i].z - b.min.z) / b.size.z);
+            //junctionMesh.uv = uvArr;
+
+            //GameObject jObj = new GameObject($"Junction_{junctionCounter++}");
+            //jObj.transform.SetParent(roadNetworkRoot.transform);
+            //if (groundLayer >= 0) jObj.layer = groundLayer;           // ★ NEW
+            //var jMf = jObj.AddComponent<MeshFilter>();
+            //var jMr = jObj.AddComponent<MeshRenderer>();
+            //jMf.mesh = junctionMesh;
+            //jMr.material = junctionSurfaceMaterial ?? GetFallbackMaterial();
+
+            //// ADD THIS LINE
+            //jObj.AddComponent<MeshCollider>().sharedMesh = junctionMesh;
+
+            // --- REPLACEMENT CODE ---
 
             Mesh junctionMesh = new Mesh
             {
@@ -293,24 +360,34 @@ public class RoadNetworkBuilder : MonoBehaviour
             junctionMesh.RecalculateNormals();
             junctionMesh.RecalculateBounds();
 
-            Bounds b = junctionMesh.bounds;
-            var uvArr = new Vector2[verts3D.Length];
-            for (int i = 0; i < verts3D.Length; i++)
-                uvArr[i] = new Vector2(
-                    (verts3D[i].x - b.min.x) / b.size.x,
-                    (verts3D[i].z - b.min.z) / b.size.z);
-            junctionMesh.uv = uvArr;
+            // === THE SANITY CHECK ===
+            // A valid mesh for a collider must have at least one triangle.
+            if (junctionMesh.triangles.Length > 0)
+            {
+                Bounds b = junctionMesh.bounds;
+                var uvArr = new Vector2[verts3D.Length];
+                for (int i = 0; i < verts3D.Length; i++)
+                    uvArr[i] = new Vector2(
+                        (verts3D[i].x - b.min.x) / b.size.x,
+                        (verts3D[i].z - b.min.z) / b.size.z);
+                junctionMesh.uv = uvArr;
 
-            GameObject jObj = new GameObject($"Junction_{junctionCounter++}");
-            jObj.transform.SetParent(roadNetworkRoot.transform);
-            if (groundLayer >= 0) jObj.layer = groundLayer;           // ★ NEW
-            var jMf = jObj.AddComponent<MeshFilter>();
-            var jMr = jObj.AddComponent<MeshRenderer>();
-            jMf.mesh = junctionMesh;
-            jMr.material = junctionSurfaceMaterial ?? GetFallbackMaterial();
-            
-            // ADD THIS LINE
-            jObj.AddComponent<MeshCollider>().sharedMesh = junctionMesh;
+                GameObject jObj = new GameObject($"Junction_{j.junctionId}"); // Use the real junction ID for easier debugging
+                jObj.transform.SetParent(roadNetworkRoot.transform);
+                if (groundLayer >= 0) jObj.layer = groundLayer;
+                var jMf = jObj.AddComponent<MeshFilter>();
+                var jMr = jObj.AddComponent<MeshRenderer>();
+                jMf.mesh = junctionMesh;
+                jMr.material = junctionSurfaceMaterial ?? GetFallbackMaterial();
+                jObj.AddComponent<MeshCollider>().sharedMesh = junctionMesh;
+            }
+            else
+            {
+                // If the mesh has no triangles, the triangulation failed. Log a detailed error.
+                string points = string.Join(", ", Array.ConvertAll(verts2D, p => $"({p.x},{p.y})"));
+                Debug.LogError($"Could not generate a valid mesh for Junction '{j.junctionId}'. " +
+                                 $"It likely has collinear or too few points. Vertices: [{points}]");
+            }
         }
 
         // ★ NEW: make sure every child built above is on the Ground layer
