@@ -248,6 +248,9 @@ public class RoadNetworkBuilder : MonoBehaviour
                 mf.sharedMesh = laneMesh;
                 mr.sharedMaterial = roadSurfaceMaterial ?? GetFallbackMaterial();
 
+                // ADD THIS LINE
+                laneObj.AddComponent<MeshCollider>().sharedMesh = laneMesh;
+
                 // swapped names
                 SpawnMarkingDecals(ExtractLeftSideVertices(laneMesh), "LaneMarking_Right", laneObj.transform);
                 SpawnMarkingDecals(ExtractRightSideVertices(laneMesh), "LaneMarking_Left", laneObj.transform);
@@ -305,6 +308,9 @@ public class RoadNetworkBuilder : MonoBehaviour
             var jMr = jObj.AddComponent<MeshRenderer>();
             jMf.mesh = junctionMesh;
             jMr.material = junctionSurfaceMaterial ?? GetFallbackMaterial();
+            
+            // ADD THIS LINE
+            jObj.AddComponent<MeshCollider>().sharedMesh = junctionMesh;
         }
 
         // ★ NEW: make sure every child built above is on the Ground layer
@@ -380,13 +386,20 @@ public class RoadNetworkBuilder : MonoBehaviour
         mf.sharedMesh = polyMesh;
         mr.sharedMaterial = GetPolygonMaterial(polygonType);
 
-        if (!string.IsNullOrEmpty(polygonType) && (polygonType.Equals("terrain", StringComparison.OrdinalIgnoreCase)
-            || polygonType.ToLowerInvariant().Contains("terrain")))
-        {
-            var meshCol = polyGO.AddComponent<MeshCollider>();
-            meshCol.sharedMesh = polyMesh;
-            meshCol.convex = false;
-        }
+        //if (!string.IsNullOrEmpty(polygonType) && (polygonType.Equals("terrain", StringComparison.OrdinalIgnoreCase)
+        //    || polygonType.ToLowerInvariant().Contains("terrain")))
+        //{
+        //    var meshCol = polyGO.AddComponent<MeshCollider>();
+        //    meshCol.sharedMesh = polyMesh;
+        //    meshCol.convex = false;
+        //}
+
+        // --- REPLACEMENT CODE ---
+        // This ensures ALL generated polygons get a collider, not just "terrain".
+        var meshCol = polyGO.AddComponent<MeshCollider>();
+        meshCol.sharedMesh = polyMesh;
+        meshCol.convex = false; // Non-convex is correct for static ground meshes
+
     }
 
     private void FlipTriangleWinding(Mesh mesh)
@@ -634,55 +647,4 @@ public class RoadNetworkBuilder : MonoBehaviour
     }
 }
 
-// ─────────────────────────────────────────────────────────────────────────────
-// LaneSegmentDecalController  (LEFT/RIGHT names swapped logic)
-// ─────────────────────────────────────────────────────────────────────────────
-[ExecuteInEditMode]
-[DisallowMultipleComponent]
-public class LaneSegmentDecalController : MonoBehaviour
-{
-    [Tooltip("Broken Lines in LEFT lane marking (acts on objects named *Right* after swap).")]
-    public bool brokenLeft;
-    [Tooltip("Broken Lines in RIGHT lane marking (acts on objects named *Left* after swap).")]
-    public bool brokenRight;
-
-    [HideInInspector] public float solidDepth = 3f;
-    [HideInInspector] public float brokenDepth = 1.5f;
-
-    private bool _prevBrokenLeft;
-    private bool _prevBrokenRight;
-
-    private void OnValidate()
-    {
-        if (brokenLeft != _prevBrokenLeft)
-        {
-            SetDepthForSide("LaneMarking_Right_Decal", brokenLeft);
-            _prevBrokenLeft = brokenLeft;
-        }
-
-        if (brokenRight != _prevBrokenRight)
-        {
-            SetDepthForSide("LaneMarking_Left_Decal", brokenRight);
-            _prevBrokenRight = brokenRight;
-        }
-    }
-
-    private void SetDepthForSide(string prefix, bool broken)
-    {
-        float targetDepth = broken ? brokenDepth : solidDepth;
-
-        var decals = GetComponentsInChildren<DecalProjector>(true);
-        foreach (var d in decals)
-        {
-            if (!d.name.StartsWith(prefix, StringComparison.Ordinal)) continue;
-            Vector3 s = d.size;
-            if (Math.Abs(s.z - targetDepth) < 0.0001f) continue;
-            s.z = targetDepth;
-            d.size = s;
-#if UNITY_EDITOR
-            EditorUtility.SetDirty(d);
-#endif
-        }
-    }
-}
 #endif

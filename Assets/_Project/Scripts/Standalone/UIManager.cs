@@ -12,6 +12,7 @@ public class UIManager : MonoBehaviour
 {
     [Header("UI References")]
     public GameObject networkPanel;
+    public GameObject setupPanel; // <-- ADD THIS
     public GameObject simulationPanel;
     public TMP_InputField pathInputField;
     public TMP_Text statusText;
@@ -19,6 +20,10 @@ public class UIManager : MonoBehaviour
 
     [Header("Core References")]
     public RoadNetworkBuilder roadNetworkBuilder; // Drag your RoadNetworkBuilder instance here
+    public FreeFlyCamera freeFlyCamera; // <-- ADD THIS (We will create this script next)
+    //public SelectionManager selectionManager; // <-- ADD THIS (We will create this script next)
+
+    public ObjectSelector objectSelector; // <-- ADD THIS (We will create this script next)
 
     private GameObject roadNetworkRoot;
 
@@ -28,10 +33,20 @@ public class UIManager : MonoBehaviour
     void Start()
     {
         // Set the initial state of the UI
-        networkPanel.SetActive(true);
+        networkPanel.SetActive(true); 
+        setupPanel.SetActive(false); // <-- ADD THIS
         simulationPanel.SetActive(false);
         progressBar.gameObject.SetActive(false); // Hide the progress bar at the start
         statusText.text = "Please select a SUMO scenario folder.";
+
+        // Disable the editing scripts at the start
+        if (freeFlyCamera) freeFlyCamera.enabled = false;
+        //if (selectionManager) selectionManager.enabled = false;
+    }
+
+    private void Update()
+    {
+      
     }
 
     // This method will be linked to the "Browse..." button
@@ -106,10 +121,34 @@ public class UIManager : MonoBehaviour
 
         yield return new WaitForSeconds(1.0f); // Let the user see the "Complete" message
 
-        // Switch to the next panel
+        // --- NEW WORKFLOW ---
+        // Switch to the Setup panel instead of the Simulation panel
         progressBar.gameObject.SetActive(false);
         networkPanel.SetActive(false);
-        simulationPanel.SetActive(true);
+        setupPanel.SetActive(true); // <-- CHANGE THIS
+
+        // Enable the camera and selection scripts
+        UnityEngine.Debug.Log("Entering Setup Mode.");
+        if (freeFlyCamera) freeFlyCamera.enabled = true;
+        //if (selectionManager)
+        //{
+        //    selectionManager.enabled = true;
+        //    // Give the selection manager the root object to work with
+        //    selectionManager.SetRoadNetworkRoot(roadNetworkBuilder.gameObject.transform.root.gameObject);
+        //}
+        roadNetworkRoot = GameObject.Find("RoadNetworkRoot");
+       
+    }
+
+    // This method is now linked to the NEW button on the SetupPanel
+    public void OnFinalizeAndStartSimulation_Click()
+    {
+        // Disable the editing scripts before moving to the next scene
+        if (freeFlyCamera) freeFlyCamera.enabled = false;
+        //if (selectionManager) selectionManager.enabled = false;
+
+        // Now call your existing simulation start logic
+        OnStartSimulationButton_Click();
     }
 
     // This method will be linked to the "Start Co-Simulation" button
@@ -117,7 +156,6 @@ public class UIManager : MonoBehaviour
     {
         try
         {
-            roadNetworkRoot = GameObject.Find("RoadNetworkRoot");
             DontDestroyOnLoad(roadNetworkRoot);
 
             // This is crucial: it prevents the generated road network from being destroyed when we load the next scene
