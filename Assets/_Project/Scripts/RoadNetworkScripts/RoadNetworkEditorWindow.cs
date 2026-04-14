@@ -81,6 +81,8 @@ internal static class BannerSlideHelper
 public class RoadNetworkEditorWindow : EditorWindow
 {
     private static string sumoXmlFolderPath;
+    private static bool generateTrafficLights = true;
+    private static bool enableMirroredLights = true;
 
     // slideshow fields
     private Texture2D[] demoSlides;
@@ -141,6 +143,11 @@ public class RoadNetworkEditorWindow : EditorWindow
             if (!string.IsNullOrEmpty(chosen)) sumoXmlFolderPath = chosen;
         }
 
+        GUILayout.Space(10);
+        generateTrafficLights = EditorGUILayout.Toggle("Generate Traffic Lights", generateTrafficLights);
+        if (generateTrafficLights)
+            enableMirroredLights = EditorGUILayout.Toggle("    Mirrored Lights", enableMirroredLights);
+
         GUILayout.Space(15);
 
         if (GUILayout.Button("Start"))
@@ -164,6 +171,12 @@ public class RoadNetworkEditorWindow : EditorWindow
 
             EditorUtility.DisplayProgressBar("Generation Progress", "Generating Road Network", 0.2f);
             builder.GenerateRoadsAndJunctions();
+
+            if (generateTrafficLights)
+            {
+                EditorUtility.DisplayProgressBar("Generation Progress", "Generating Traffic Lights", 0.8f);
+                builder.GenerateTrafficLights(enableMirroredLights);
+            }
 
             EditorUtility.ClearProgressBar();
             Close();

@@ -68,6 +68,10 @@ public class RoadNetworkBuilder : MonoBehaviour
     // NEW: cache junction polygons (Unity XZ plane)
     private readonly List<Vector2[]> _junctionPolys2D = new();
 
+    // Extracted traffic light data
+    private Dictionary<string, Dictionary<int, string>> _tlConnections;
+    private HashSet<string> _tlJunctionIds;
+
     public void LoadSumoXmlFiles(string sumoFilesFolder)
     {
         if (roadNetworkRoot != null)
@@ -221,6 +225,25 @@ public class RoadNetworkBuilder : MonoBehaviour
 
         // ★ NEW: ensure polygons just created inherit the Ground layer
         SetLayerRecursively(roadNetworkRoot, groundLayer);
+
+        // Extract traffic light data from the net file
+        _tlConnections = new Dictionary<string, Dictionary<int, string>>();
+        foreach (ConnectionType conn in netFile.Connection)
+        {
+            if (string.IsNullOrEmpty(conn.Tl) || string.IsNullOrEmpty(conn.LinkIndex)) continue;
+            if (!int.TryParse(conn.LinkIndex, out int linkIdx)) continue;
+
+            if (!_tlConnections.TryGetValue(conn.Tl, out var map))
+            {
+                map = new Dictionary<int, string>();
+                _tlConnections[conn.Tl] = map;
+            }
+            map[linkIdx] = conn.From;
+        }
+
+        _tlJunctionIds = new HashSet<string>();
+        foreach (TlLogicType tl in netFile.TlLogic)
+            _tlJunctionIds.Add(tl.Id);
     }
 
     public void GenerateRoadsAndJunctions()
@@ -631,6 +654,154 @@ public class RoadNetworkBuilder : MonoBehaviour
             if (intersect) inside = !inside;
         }
         return inside;
+    }
+
+
+    public void GenerateTrafficLights(bool mirroredLights = true)
+    {
+        if (_tlConnections == null || _tlJunctionIds == null) { Debug.LogError("Net file not loaded."); return; }
+
+        // Load ThreeLight prefab from Resources
+        GameObject tlPrefab = Resources.Load<GameObject>("TrafficLight/ThreeLight");
+        if (tlPrefab == null)
+        {
+            Debug.LogError("TrafficLight/ThreeLight prefab not found in Resources.");
+            return;
+        }
+
+        GameObject junctionsRoot = new GameObject("Junctions");
+        foreach (string jId in _tlJunctionIds)
+        {
+            if (!junctionRecords.TryGetValue(jId, out RoadJunctionData jData)) continue;
+            if (!_tlConnections.TryGetValue(jId, out var linkToEdge)) continue;
+
+            // Junction center in Unity coords
+            Vector3 junctionCenter = ToUnity(jData.xPos, jData.yPos);
+
+            GameObject junctionGO = new GameObject(jId);
+            junctionGO.transform.SetParent(junctionsRoot.transform);
+            junctionGO.transform.position = Vector3.zero;
+
+            // Group linkIndices by fromEdge
+            var edgeToLinks = new Dictionary<string, List<int>>();
+            foreach (var kvp in linkToEdge)
+            {
+                if (!edgeToLinks.TryGetValue(kvp.Value, out var list))
+                {
+                    list = new List<int>();
+                    edgeToLinks[kvp.Value] = list;
+                }
+                list.Add(kvp.Key);
+            }
+
+            // For each incoming edge, place one visible ThreeLight prefab
+            foreach (var edgeEntry in edgeToLinks)
+            {
+                string edgeId = edgeEntry.Key;
+                List<int> linkIndices = edgeEntry.Value;
+                linkIndices.Sort();
+
+                // Find lane endpoint to position the traffic light
+                Vector3 laneEndPos = junctionCenter;
+                Vector3 approachDir = Vector3.forward;
+                float totalRoadWidth = 0f;
+
+                if (edgeRecords.TryGetValue(edgeId, out RoadEdgeData edgeData))
+                {
+                    // Sum total road width across all lanes
+                    foreach (var ln in edgeData.GetLaneDataList())
+                    {
+                        float w = (float)ln.laneWidth;
+                        totalRoadWidth += (w > 0f ? w : 3.2f);
+                    }
+
+                    var lanes = edgeData.GetLaneDataList();
+                    if (lanes.Count > 0)
+                    {
+                        // Use the rightmost lane (index 0 in SUMO) which is closest to the curb
+                        var lane = lanes[0];
+                        if (lane.shapePoints.Count >= 2)
+                        {
+                            int last = lane.shapePoints.Count - 1;
+                            Vector3 laneEnd = ToUnity(lane.shapePoints[last][0], lane.shapePoints[last][1]);
+
+                            Vector3 prevPt = ToUnity(lane.shapePoints[last - 1][0], lane.shapePoints[last - 1][1]);
+                            approachDir = (laneEnd - prevPt).normalized;
+
+                            // Move the light to the far side of the junction (opposite the stop line)
+                            float forwardDist = Vector3.Dot(junctionCenter - laneEnd, approachDir);
+                            Vector3 farSideBase = laneEnd + approachDir * (2f * forwardDist);
+
+                            float laneW = (float)lane.laneWidth;
+                            if (laneW <= 0f) laneW = 3.2f;
+                            Vector3 rightDir = new Vector3(approachDir.z, 0f, -approachDir.x);
+                            float curbOffset = 0.5f;
+
+                            // Primary: right of rightmost lane edge
+                            laneEndPos = farSideBase + rightDir * (laneW * 0.5f + curbOffset);
+                        }
+                    }
+                }
+                if (totalRoadWidth <= 0f) totalRoadWidth = 6.4f;
+
+                // Primary Head: first linkIndex for this edge gets the visible ThreeLight
+                int primaryLink = linkIndices[0];
+                GameObject head = (GameObject)PrefabUtility.InstantiatePrefab(tlPrefab);
+                head.name = $"Head{primaryLink}";
+                head.transform.SetParent(junctionGO.transform);
+                head.transform.position = laneEndPos;
+                // Face toward oncoming traffic (the light faces the driver)
+                head.transform.rotation = Quaternion.LookRotation(-approachDir, Vector3.up);
+
+                if (mirroredLights)
+                {
+                    // Left-side mirror position: cross both incoming and opposing lanes
+                    Vector3 mirrorRightDir = new Vector3(approachDir.z, 0f, -approachDir.x);
+                    float mirrorCurbOffset = 0.5f;
+                    // Approximate full road width as 2x incoming lanes (incoming + opposing direction)
+                    Vector3 leftSidePos = laneEndPos - mirrorRightDir * (2f * totalRoadWidth + 2f * mirrorCurbOffset);
+
+                    // Mirrored light on the left side (child of primary so state syncs)
+                    GameObject mirror = (GameObject)PrefabUtility.InstantiatePrefab(tlPrefab);
+                    mirror.name = "Mirror";
+                    mirror.transform.SetParent(head.transform);
+                    mirror.transform.position = leftSidePos;
+                    mirror.transform.rotation = Quaternion.LookRotation(-approachDir, Vector3.up);
+                    // Flip the mirror along the local X axis
+                    mirror.transform.localScale = new Vector3(-1f, 1f, 1f);
+                }
+
+                // Set initial state to red (deactivate green and yellow)
+                SetChildActive(head.transform, "green_light", false);
+                SetChildActive(head.transform, "yellow_light", false);
+                SetChildActive(head.transform, "red_light", true);
+
+                // Secondary Heads: invisible stubs with green_light/yellow_light/red_light children
+                for (int i = 1; i < linkIndices.Count; i++)
+                {
+                    int linkIdx = linkIndices[i];
+                    GameObject stub = new GameObject($"Head{linkIdx}");
+                    stub.transform.SetParent(junctionGO.transform);
+                    stub.transform.position = laneEndPos;
+
+                    // Create minimal children so SimulationController's SetSignalState works
+                    new GameObject("green_light").transform.SetParent(stub.transform);
+                    new GameObject("yellow_light").transform.SetParent(stub.transform);
+                    new GameObject("red_light").transform.SetParent(stub.transform);
+                }
+            }
+        }
+        Debug.Log($"[Sumo2Unity] Generated traffic lights for {_tlJunctionIds.Count} junctions under 'Junctions' root.");
+    }
+
+    private static void SetChildActive(Transform parent, string childName, bool active)
+    {
+        foreach (Transform child in parent)
+        {
+            if (child.name == childName) { child.gameObject.SetActive(active); return; }
+            // search recursively (the FBX hierarchy may be nested)
+            SetChildActive(child, childName, active);
+        }
     }
 }
 
