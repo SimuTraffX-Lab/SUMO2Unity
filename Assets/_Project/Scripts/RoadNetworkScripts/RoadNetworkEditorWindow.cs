@@ -81,7 +81,7 @@ internal static class BannerSlideHelper
 public class RoadNetworkEditorWindow : EditorWindow
 {
     private static string sumoXmlFolderPath;
-    private static bool generateTrafficLights = true;
+    private static bool generateTrafficLights = false;
     private static bool enableMirroredLights = true;
 
     // slideshow fields
