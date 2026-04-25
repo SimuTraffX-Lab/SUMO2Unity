@@ -657,15 +657,16 @@ public class RoadNetworkBuilder : MonoBehaviour
     }
 
 
-    public void GenerateTrafficLights(bool mirroredLights = true)
+    public void GenerateTrafficLights(bool mirroredLights = true, bool useCornerLight = false)
     {
         if (_tlConnections == null || _tlJunctionIds == null) { Debug.LogError("Net file not loaded."); return; }
 
-        // Load ThreeLight prefab from Resources
-        GameObject tlPrefab = Resources.Load<GameObject>("TrafficLight/ThreeLight");
+        // Load the selected traffic light prefab from Resources
+        string prefabPath = useCornerLight ? "TrafficLight/MiddleTrafficLight" : "TrafficLight/ThreeLight";
+        GameObject tlPrefab = Resources.Load<GameObject>(prefabPath);
         if (tlPrefab == null)
         {
-            Debug.LogError("TrafficLight/ThreeLight prefab not found in Resources.");
+            Debug.LogError($"Traffic light prefab not found in Resources: {prefabPath}");
             return;
         }
 

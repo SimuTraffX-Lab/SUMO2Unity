@@ -78,11 +78,14 @@ internal static class BannerSlideHelper
 }
 
 // ───────────────────────────────────────────────────────────────  Window 1
+public enum TrafficLightType { ThreeLight, MiddleTrafficLight }
+
 public class RoadNetworkEditorWindow : EditorWindow
 {
     private static string sumoXmlFolderPath;
     private static bool generateTrafficLights = false;
     private static bool enableMirroredLights = true;
+    private static TrafficLightType trafficLightType = TrafficLightType.ThreeLight;
 
     // slideshow fields
     private Texture2D[] demoSlides;
@@ -146,7 +149,10 @@ public class RoadNetworkEditorWindow : EditorWindow
         GUILayout.Space(10);
         generateTrafficLights = EditorGUILayout.Toggle("Generate Traffic Lights", generateTrafficLights);
         if (generateTrafficLights)
+        {
             enableMirroredLights = EditorGUILayout.Toggle("    Mirrored Lights", enableMirroredLights);
+            trafficLightType = (TrafficLightType)EditorGUILayout.EnumPopup("    Light Type", trafficLightType);
+        }
 
         GUILayout.Space(15);
 
@@ -175,7 +181,7 @@ public class RoadNetworkEditorWindow : EditorWindow
             if (generateTrafficLights)
             {
                 EditorUtility.DisplayProgressBar("Generation Progress", "Generating Traffic Lights", 0.8f);
-                builder.GenerateTrafficLights(enableMirroredLights);
+                builder.GenerateTrafficLights(enableMirroredLights, trafficLightType == TrafficLightType.MiddleTrafficLight);
             }
 
             EditorUtility.ClearProgressBar();
