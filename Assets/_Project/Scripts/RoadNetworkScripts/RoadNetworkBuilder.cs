@@ -771,11 +771,6 @@ public class RoadNetworkBuilder : MonoBehaviour
                     mirror.transform.localScale = new Vector3(-1f, 1f, 1f);
                 }
 
-                // Set initial state to red (deactivate green and yellow)
-                SetChildActive(head.transform, "green_light", false);
-                SetChildActive(head.transform, "yellow_light", false);
-                SetChildActive(head.transform, "red_light", true);
-
                 // Secondary Heads: invisible stubs with green_light/yellow_light/red_light children
                 for (int i = 1; i < linkIndices.Count; i++)
                 {
@@ -794,15 +789,6 @@ public class RoadNetworkBuilder : MonoBehaviour
         Debug.Log($"[Sumo2Unity] Generated traffic lights for {_tlJunctionIds.Count} junctions under 'Junctions' root.");
     }
 
-    private static void SetChildActive(Transform parent, string childName, bool active)
-    {
-        foreach (Transform child in parent)
-        {
-            if (child.name == childName) { child.gameObject.SetActive(active); return; }
-            // search recursively (the FBX hierarchy may be nested)
-            SetChildActive(child, childName, active);
-        }
-    }
 }
 
 // ─────────────────────────────────────────────────────────────────────────────
