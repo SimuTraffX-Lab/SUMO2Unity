@@ -1,4 +1,18 @@
-## Welcome to Sumo2Unity Traffic Co-Simulation Tool
+## Welcome to SUMO2Unity Traffic Co-Simulation Tool
+
+<p align="center">
+  <strong>Explore the official SUMO2Unity guide on RoadwayVR</strong><br>
+  Workflow, setup tutorials, demonstrations, research papers, and common questions.
+</p>
+
+<p align="center">
+  <a href="https://roadwayvr.com/sumo2unity/?utm_source=github&utm_medium=repository&utm_campaign=sumo2unity">
+    <img src="https://img.shields.io/badge/Official_Guide-RoadwayVR-087D76?style=for-the-badge" alt="Open the official SUMO2Unity guide on RoadwayVR">
+  </a>
+  <a href="https://github.com/SimuTraffX-Lab/SUMO2Unity/releases/latest">
+    <img src="https://img.shields.io/badge/Download-Latest_Release-10243A?style=for-the-badge" alt="Download the latest SUMO2Unity release">
+  </a>
+</p>
 
 <p align="left">
   <img src="https://img.shields.io/github/contributors/SimuTraffX-Lab/SUMO2Unity?style=for-the-badge">
@@ -28,12 +42,12 @@ It only requires three steps:
   <img src="https://github.com/user-attachments/assets/b60f107a-2309-4260-b749-7d0a8c712c16" alt="7" width="720">
 </p>
 
-## A User Firendly tool
+## A User-Friendly Tool
 
 You can run it without requiring any specific package. You only need SUMO and Unity which both are free tools.
 
 
-## Driver Prespective
+## Driver Perspective
 <p align="center"><em>Check out the quick 1 minute demo - Click to Play</em></p>
 <p align="center">
   <a href="https://youtu.be/im94-gCvA1E" target="_blank">
@@ -41,7 +55,7 @@ You can run it without requiring any specific package. You only need SUMO and Un
   </a>
 </p>
 
-## Bicycle Prespective
+## Bicycle Perspective
 <p align="center"><em>Check out the quick 1 minute demo - Click to Play</em></p>
 <p align="center">
   <a href="https://youtu.be/-irVV5CndfI" target="_blank">
@@ -49,7 +63,7 @@ You can run it without requiring any specific package. You only need SUMO and Un
   </a>
 </p>
 
-## 3D Visualization Prespective
+## 3D Visualization Perspective
 <p align="center"><em>Check out the quick minutes demo - Click to Play</em></p>
 <p align="center">
   <a href="https://youtu.be/AnrVQ6WHWJg" target="_blank">
@@ -65,6 +79,9 @@ You can run it without requiring any specific package. You only need SUMO and Un
 </p>
 
 ## Getting Started
+
+For a guided overview of the complete workflow, visit the **[official SUMO2Unity guide on RoadwayVR](https://roadwayvr.com/sumo2unity/?utm_source=github&utm_medium=repository&utm_campaign=sumo2unity)**.
+
 -SUMO - Step by Step Tutorial [Youtube Tutorial](https://youtu.be/IwsrNWlX9Ag?si=ui75deOeqbreQTf7)
 1. Install SUMO (Version 1.22)
 2. Set Up SUMO Environment Variables
@@ -90,17 +107,17 @@ You can run it without requiring any specific package. You only need SUMO and Un
 - Sumo2Unity does not contain pedestrians at the moment.
 
 ## Additional Help
-- If you need more help or have any questions, feel free to create a new issue at the [Issues](https://github.com/SUMO2Unity/SUMO2Unity/issues) section. 
+- Review the **[RoadwayVR SUMO2Unity guide](https://roadwayvr.com/sumo2unity/?utm_source=github&utm_medium=repository&utm_campaign=sumo2unity)** for the workflow, setup sequence, demonstrations, research, and FAQs.
+- If you need more help or have a technical question, create an issue in the [SUMO2Unity issue tracker](https://github.com/SimuTraffX-Lab/SUMO2Unity/issues).
 
 ## Paper
 If you use SUMO2Unity, please cite our papers.
 
-Mohammadi, A., Park, P. Y., Nourinejad, M., Cherakkatil, M. S. B., & Park, H. S. (2024, June). SUMO2Unity: An Open-Source Traffic Co-Simulation Tool to Improve Road Safety. In 2024 IEEE Intelligent Vehicles Symposium (IV) (pp. 2523-2528). IEEE.
+[Mohammadi, A., Park, P. Y., Nourinejad, M., Cherakkatil, M. S. B., & Park, H. S. (2024, June). SUMO2Unity: An Open-Source Traffic Co-Simulation Tool to Improve Road Safety. In 2024 IEEE Intelligent Vehicles Symposium (IV) (pp. 2523-2528). IEEE.](https://doi.org/10.1109/IV55156.2024.10588571)
 
-Mohammadi, A., Cherakkatil, M. S. B., Park, P. Y., Nourinejad, M., & Asgary, A. (2025). An Open-Source Virtual Reality Traffic Co-Simulation for Enhanced Traffic Safety Assessment. Applied Sciences, 15(17), 9351.
+[Mohammadi, A., Cherakkatil, M. S. B., Park, P. Y., Nourinejad, M., & Asgary, A. (2025). An Open-Source Virtual Reality Traffic Co-Simulation for Enhanced Traffic Safety Assessment. Applied Sciences, 15(17), 9351.](https://doi.org/10.3390/app15179351)
 
 
 ## License
 - SUMO2Unity codes are distributed under MIT License.
 - SUMO2Unity assets are distributed under CC-BY License.
-
