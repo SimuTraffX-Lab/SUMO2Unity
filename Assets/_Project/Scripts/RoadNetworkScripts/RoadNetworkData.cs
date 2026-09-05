@@ -39,8 +39,8 @@ namespace Assets.Scripts.SUMOImporter.NetFileComponents
             foreach (string chunk in shapeStr.Split(' '))
             {
                 string[] xy = chunk.Split(',');
-                double xC = Convert.ToDouble(xy[0]);
-                double yC = Convert.ToDouble(xy[1]);
+                double xC = SumoNumberParser.ParseDouble(xy[0]);
+                double yC = SumoNumberParser.ParseDouble(xy[1]);
                 shapePoints.Add(new double[] { xC, yC });
             }
         }
@@ -115,8 +115,8 @@ namespace Assets.Scripts.SUMOImporter.NetFileComponents
                 foreach (string coordPair in shapeCoordinates.Split(' '))
                 {
                     string[] coords = coordPair.Split(',');
-                    double xC = Convert.ToDouble(coords[0]);
-                    double yC = Convert.ToDouble(coords[1]);
+                    double xC = SumoNumberParser.ParseDouble(coords[0]);
+                    double yC = SumoNumberParser.ParseDouble(coords[1]);
                     shapePoints.Add(new double[] { xC, yC });
                 }
             }

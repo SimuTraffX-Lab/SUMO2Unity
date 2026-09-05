@@ -111,17 +111,17 @@ public class RoadNetworkBuilder : MonoBehaviour
         if (!string.IsNullOrEmpty(netFile.Location?.ConvBoundary))
         {
             var bounds = netFile.Location.ConvBoundary.Split(',');
-            minX = float.Parse(bounds[0]);
-            minY = float.Parse(bounds[1]);
-            maxX = float.Parse(bounds[2]);
-            maxY = float.Parse(bounds[3]);
+            minX = SumoNumberParser.ParseFloat(bounds[0]);
+            minY = SumoNumberParser.ParseFloat(bounds[1]);
+            maxX = SumoNumberParser.ParseFloat(bounds[2]);
+            maxY = SumoNumberParser.ParseFloat(bounds[3]);
         }
 
         if (!string.IsNullOrEmpty(netFile.Location?.NetOffset))
         {
             var p = netFile.Location.NetOffset.Split(',');
-            originX = float.Parse(p[0]);
-            originY = float.Parse(p[1]);
+            originX = SumoNumberParser.ParseFloat(p[0]);
+            originY = SumoNumberParser.ParseFloat(p[1]);
         }
         else
         {
@@ -144,9 +144,9 @@ public class RoadNetworkBuilder : MonoBehaviour
                 var newJunction = new RoadJunctionData(
                     jt.Id,
                     jt.Type,
-                    float.Parse(jt.X),
-                    float.Parse(jt.Y),
-                    string.IsNullOrEmpty(jt.Z) ? 0f : float.Parse(jt.Z),
+                    SumoNumberParser.ParseFloat(jt.X),
+                    SumoNumberParser.ParseFloat(jt.Y),
+                    SumoNumberParser.ParseFloatOrDefault(jt.Z, 0f),
                     jt.IncLanes,
                     jt.Shape);
 
@@ -204,7 +204,9 @@ public class RoadNetworkBuilder : MonoBehaviour
                 foreach (string pair in poly.Shape.Split(' '))
                 {
                     var parts = pair.Split(',');
-                    shapeData.AddPoint(Convert.ToDouble(parts[0]), Convert.ToDouble(parts[1]));
+                    shapeData.AddPoint(
+                        SumoNumberParser.ParseDouble(parts[0]),
+                        SumoNumberParser.ParseDouble(parts[1]));
                 }
                 shapeData.RemoveDuplicateEndPoint();
                 if (!polygonShapes.ContainsKey(poly.Id))
